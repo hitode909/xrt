@@ -11,8 +11,8 @@ checker = XRT::DepthChecker.new
 target_files.each_with_index{|target_file, index|
   warn "Checking #{target_file}"
   parsed, annotated_source = checker.check target_file
+  warn annotated_source
   unless parsed
-    warn annotated_source
     warn "Failed to parser #{target_file} (#{index}/#{target_files.length})"
     exit 1
   end
