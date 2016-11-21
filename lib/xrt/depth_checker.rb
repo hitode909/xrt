@@ -16,7 +16,11 @@ module XRT
         annotated_source += statement
 
         color = 44 + diff
-        annotated_source += "\e[#{color}m#{current_level}\e[0m"
+        if STDOUT.tty?
+          annotated_source += "\e[#{color}m#{current_level}\e[0m"
+        else
+          annotated_source += current_level.to_s
+        end
       }
       if current_level == 0
         return true, annotated_source
