@@ -17,7 +17,7 @@ module XRT
 
     def beginning_block_regexp
       keywords = %w(IF UNLESS FOR FOREACH WHILE SWITCH MACRO BLOCK WRAPPER FILTER)
-      /\[%.?\s*\b#{keywords.join('|')}\b/
+      /\[%.?\s*\b(#{keywords.join('|')})\b/
     end
 
     def end_block_regexp
