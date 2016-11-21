@@ -34,7 +34,14 @@ class TC_XRT_Syntax < Test::Unit::TestCase
   end
 
   def test_block_level
+    assert_equal(0, @syntax.block_level('[% foo %]'))
+    assert_equal(1, @syntax.block_level('[% IF 1 %]'))
+    assert_equal(1, @syntax.block_level('[%- IF 1 -%]'))
+    assert_equal(0, @syntax.block_level('[% IF a THEN 1 END %]'))
+    assert_equal(0, @syntax.block_level('[% IF a THEN 1 ELSE 0 END %]'))
+    assert_equal(0, @syntax.block_level('[% a ? 1 : 0 %]'))
     assert_equal(-1, @syntax.block_level('[% END # WRAPPER "wrapper.tt" WITH %]'))
-    assert_equal(0, @syntax.block_level('[% "true" UNLESS false %]'))
+    assert_equal(0, @syntax.block_level('[% 2 UNLESS a %]'))
+    assert_equal(0, @syntax.block_level('[% 1 IF a %]'))
   end
 end
