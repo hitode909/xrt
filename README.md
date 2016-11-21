@@ -1,6 +1,6 @@
 # Xrt
 
-TODO: Write a gem description
+Refactoring Tool for Xslate. Currently aim to refactor TTerse templates.
 
 ## Installation
 
