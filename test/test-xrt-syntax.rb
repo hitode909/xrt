@@ -18,6 +18,7 @@ class TC_XRT_Syntax < Test::Unit::TestCase
   def test_beginning_block?
     assert @syntax.beginning_block? '[% IF 1 %]'
     assert @syntax.beginning_block? '[% WHILE 1 %]'
+    assert_nil @syntax.beginning_block? '[% END # WRAPPER "wrapper.tt" WITH %]'
   end
 
   def test_block?
@@ -30,6 +31,11 @@ class TC_XRT_Syntax < Test::Unit::TestCase
 
   def test_end_block?
     assert @syntax.end_block? '[% END %]'
+    assert @syntax.end_block? '[% END # WRAPPER "wrapper.tt" WITH %]'
     assert_nil @syntax.end_block? ' END '
+  end
+
+  def test_block_level
+    assert_equal(-1, @syntax.block_level('[% END # WRAPPER "wrapper.tt" WITH %]'))
   end
 end
