@@ -12,12 +12,11 @@ module XRT
       current_level = 0
       parser.statements.each{|statement|
         diff = syntax.block_level statement
+        current_level += diff
         annotated_source += statement
-        if diff != 0
-          current_level += diff
-          color = diff > 0 ? 31 : 33
-          annotated_source += "\e[#{color}m#{current_level}\e[0m"
-        end
+
+        color = 44 + diff
+        annotated_source += "\e[#{color}m#{current_level}\e[0m"
       }
       if current_level == 0
         return true, annotated_source
