@@ -1,7 +1,17 @@
 module XRT
   class Syntax
+    def block? statement
+      statement =~ /\A\[%.+%\]\Z/m
+    end
+
     def beginning_block? statement
       statement =~ beginning_block_regexp
+    end
+
+    def end_block? statement
+      return unless block? statement
+      without_comment = remove_comment statement
+      without_comment =~ end_block_regexp
     end
 
     def beginning_block_regexp

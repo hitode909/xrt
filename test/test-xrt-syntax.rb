@@ -19,4 +19,17 @@ class TC_XRT_Syntax < Test::Unit::TestCase
     assert @syntax.beginning_block? '[% IF 1 %]'
     assert @syntax.beginning_block? '[% WHILE 1 %]'
   end
+
+  def test_block?
+    assert @syntax.beginning_block? '[% IF 1 %]'
+    assert @syntax.beginning_block? '[%- IF 1 -%]'
+    assert @syntax.beginning_block? "[% IF 1\nfoo\nEND %]"
+    assert_nil @syntax.beginning_block? "hi"
+    assert_nil @syntax.beginning_block? "[%"
+  end
+
+  def test_end_block?
+    assert @syntax.end_block? '[% END %]'
+    assert_nil @syntax.end_block? ' END '
+  end
 end
