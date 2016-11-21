@@ -29,11 +29,11 @@ module XRT
     end
 
     def block_level(statement)
-      statement.strip!
-      return 0 unless block? statement
+      stripped = statement.strip
+      return 0 unless block? stripped
       level = 0
-      level += 1 if beginning_block? statement
-      level -= 1 if end_block? statement
+      level += 1 if beginning_block? stripped
+      level -= 1 if end_block? stripped
       level
     end
   end
