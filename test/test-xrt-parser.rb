@@ -10,6 +10,7 @@ class TestXRTParser < Test::Unit::TestCase
     test_cases = [
       ['<html>', ['<html>']],
       ['a [% b %] c', ['a ', '[% b %]', ' c']],
+      ['[% a %] [% b %] [% c %]', ['', '[% a %]', ' ', '[% b %]', ' ', '[% c %]']],
       ['[% FOR k IN [1, 2, 3] %]', ['[% FOR k IN [1, 2, 3] %]']],
     ]
 
