@@ -15,18 +15,21 @@ class TestStatement < Test::Unit::TestCase
     text = XRT::Statement::Text.new('hi')
     assert text.kind_of? XRT::Statement
     assert_equal text.content, 'hi'
+    assert_equal text.children, []
   end
 
   def test_directive
     text = XRT::Statement::End.new('[% foo() %]')
     assert text.kind_of? XRT::Statement
     assert_equal text.content, '[% foo() %]'
+    assert_equal text.children, []
   end
 
   def test_end
     text = XRT::Statement::End.new('[% END %]')
     assert text.kind_of? XRT::Statement
     assert_equal text.content, '[% END %]'
+    assert_equal text.children, []
   end
 
   def test_block

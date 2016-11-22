@@ -17,6 +17,10 @@ module XRT
     def inspect
       "<#{self.class}:#{self.content}>"
     end
+
+    def children
+      []
+    end
   end
 
   class Statement
