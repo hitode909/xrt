@@ -14,4 +14,12 @@ class TestDepthChecker < Test::Unit::TestCase
     assert_equal true, @checker.check(%q{[% IF a %]1[% END %]})[1].kind_of?(String)
     assert_equal true, @checker.check(%q{[% IF a %]})[1].kind_of?(String)
   end
+
+  def test_max_depth
+    assert_equal 0, @checker.max_depth(%q{foo})
+    assert_equal 0, @checker.max_depth(%q{[% foo %]})
+    assert_equal 1, @checker.max_depth(%q{[% IF a %]1[% END %]})
+
+    assert_raises { @checker.max_depth(%q{[% IF a %]}) }
+  end
 end
