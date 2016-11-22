@@ -6,6 +6,51 @@ class TestXRTParser < Test::Unit::TestCase
     @parser = XRT::Parser.new
   end
 
+  def test_document_empty
+    parser = XRT::Parser.new('')
+    doc = parser.document
+    assert doc.kind_of? XRT::Statement::Document
+    assert_equal [], doc.children
+  end
+
+  def test_document_text_directive
+    parser = XRT::Parser.new('1[% 2 %]3')
+    doc = parser.document
+    assert doc.kind_of? XRT::Statement::Document
+    assert_equal [
+      XRT::Statement::Text.new('1'),
+      XRT::Statement::Directive.new('[% 2 %]'),
+      XRT::Statement::Text.new('3'),
+    ], doc.children
+  end
+
+  def test_document_block
+    parser = XRT::Parser.new('[% IF a %]1[% END %]')
+    doc = parser.document
+    assert doc.kind_of? XRT::Statement::Document
+    if_block = XRT::Statement::Block.new('[% IF a %]')
+    if_block << XRT::Statement::Text.new('1')
+    if_block << XRT::Statement::Text.new('[% END %]')
+    assert_equal [
+      if_block
+    ], doc.children
+  end
+
+    def test_document_nested_block
+      parser = XRT::Parser.new('[% IF a %][% IF b %]1[% END %][% END %]')
+      doc = parser.document
+      assert doc.kind_of? XRT::Statement::Document
+      if_block1 = XRT::Statement::Block.new('[% IF a %]')
+      if_block2 = XRT::Statement::Block.new('[% IF b %]')
+      if_block2 << XRT::Statement::Text.new('1')
+      if_block2 << XRT::Statement::Text.new('[% END %]')
+      if_block1 << if_block2
+      if_block1 << XRT::Statement::Text.new('[% END %]')
+      assert_equal [
+        if_block1
+      ], doc.children
+    end
+
   def test_read_directive
     assert_equal '[% %]', @parser.read_directive('[% %]')
     assert_equal '[% [ ] %]', @parser.read_directive('[% [ ] %]')

@@ -4,6 +4,35 @@ module XRT
       @source = source
     end
 
+    def document
+      doc = XRT::Statement::Document.new
+
+      tokenized = self.tokens
+
+      parse_contents(tokenized, doc)
+      doc
+    end
+
+    def parse_contents(tokenized, node)
+      while tokenized.length > 0
+        statement = XRT::Statement::Factory.new_from_content(tokenized.shift)
+        case statement
+        when XRT::Statement::Block
+          parse_contents(tokenized, statement)
+          node << statement
+        when XRT::Statement::End
+          node << statement
+          break
+        when XRT::Statement::Text
+          node << statement
+        when XRT::Statement::Directive
+          node << statement
+        end
+      end
+
+      node
+    end
+
     def tokens
       reading = @source.clone
       result = []
