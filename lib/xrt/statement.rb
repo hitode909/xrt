@@ -10,6 +10,24 @@ module XRT
   end
 
   class Statement
+    class Document < Statement
+      def initialize
+        @children = []
+      end
+
+      def << statement
+        @children << statement
+      end
+
+      def children
+        @children
+      end
+
+      def content
+        children.map{|c| c.content }.join
+      end
+    end
+
     class Text < Statement
     end
 

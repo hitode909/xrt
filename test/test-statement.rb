@@ -26,6 +26,18 @@ class TestStatement < Test::Unit::TestCase
     assert_equal text.content, '[% IF 1 %]'
     assert_equal text.children, []
   end
+
+  def test_document
+    document = XRT::Statement::Document.new
+    s1 = XRT::Statement::Text.new('ok')
+    s2 = XRT::Statement::Directive.new('[% foo %]')
+    document << s1
+    document << s2
+
+    assert_equal document.children, [s1, s2]
+
+    assert_equal document.content, %q{ok[% foo %]}
+  end
 end
 
 class TestBlock < Test::Unit::TestCase
