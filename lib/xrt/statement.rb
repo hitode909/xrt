@@ -29,7 +29,7 @@ module XRT
         children.last.kind_of? End
       end
 
-      def push_child statement
+      def << statement
         raise 'trying to push_child to closed block' if closed?
         @children << statement
       end

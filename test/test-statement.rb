@@ -37,16 +37,16 @@ class TestBlock < Test::Unit::TestCase
     statement_ok = XRT::Statement::Text.new('ok')
     statement_end = XRT::Statement::End.new('[% END %]')
 
-    block.push_child statement_ok
+    block << statement_ok
     assert_equal false, block.closed?
 
-    block.push_child statement_end
+    block << statement_end
     assert_equal true, block.closed?
 
     assert_equal block.children, [statement_ok, statement_end]
 
     assert_raises {
-      block.push_child statement_ok
+      block << statement_ok
     }
   end
 end
