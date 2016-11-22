@@ -27,6 +27,8 @@ module XRT
         if child.equal? old_child
           children[index] = new_child
           return old_child
+        elsif child.replace_child(new_child, old_child)
+          return old_child
         end
       }
       nil

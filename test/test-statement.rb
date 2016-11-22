@@ -66,6 +66,19 @@ class TestStatement < Test::Unit::TestCase
     assert_equal '2', document.content, 'replaced'
   end
 
+  def test_replace_child_for_descendant
+    document = XRT::Statement::Document.new
+    if_block = XRT::Statement::Block.new('[% IF a %]')
+    if_block_inner_text = XRT::Statement::Text.new('1')
+    new_if_block_inner_text = XRT::Statement::Text.new('2')
+    if_block << if_block_inner_text
+    if_block << XRT::Statement::Text.new('[% END %]')
+    document << if_block
+
+    assert document.replace_child(new_if_block_inner_text, if_block_inner_text)
+    assert_equal '[% IF a %]2[% END %]', document.content
+  end
+
   def test_depth
     document = XRT::Statement::Document.new
     s1 = XRT::Statement::Text.new('1')
