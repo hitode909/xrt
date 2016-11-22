@@ -1,7 +1,7 @@
 require 'test/unit'
 require 'xrt/parser'
 
-class TestXRTParser < Test::Unit::TestCase
+class TestParser < Test::Unit::TestCase
   def setup
     @parser = XRT::Parser.new
   end

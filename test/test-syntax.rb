@@ -1,7 +1,7 @@
 require 'test/unit'
 require 'xrt/syntax'
 
-class TC_XRT_Syntax < Test::Unit::TestCase
+class TestSyntax < Test::Unit::TestCase
   def setup
     @syntax = XRT::Syntax.new
   end
