@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/hitode909/xrt.svg?branch=master)](https://travis-ci.org/hitode909/xrt)
+
 # XRT
 
 Refactoring Tool for [Text::Xslate](https://metacpan.org/pod/Text::Xslate).
