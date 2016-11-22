@@ -31,6 +31,17 @@ module XRT
       }
       nil
     end
+
+    def depth(target)
+      children.each{|child|
+        return 0 if child.equal? target
+        d = child.depth(target)
+        if d
+          return d + 1
+        end
+      }
+      nil
+    end
   end
 
   class Statement

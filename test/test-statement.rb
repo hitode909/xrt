@@ -65,6 +65,23 @@ class TestStatement < Test::Unit::TestCase
     assert_same replaced, s1
     assert_equal '2', document.content, 'replaced'
   end
+
+  def test_depth
+    document = XRT::Statement::Document.new
+    s1 = XRT::Statement::Text.new('1')
+    if_block = XRT::Statement::Block.new('[% IF a %]')
+    if_block_inner_text = XRT::Statement::Text.new('1')
+    if_block << if_block_inner_text
+    if_block << XRT::Statement::Text.new('[% END %]')
+    not_child = XRT::Statement::Text.new('not_child')
+    document << s1
+    document << if_block
+
+    assert_equal 0, document.depth(s1)
+    assert_equal 0, document.depth(if_block)
+    assert_equal 1, document.depth(if_block_inner_text)
+    assert_equal nil, document.depth(not_child)
+  end
 end
 
 class TestBlock < Test::Unit::TestCase
