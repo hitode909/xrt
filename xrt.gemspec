@@ -8,16 +8,14 @@ Gem::Specification.new do |spec|
   spec.version       = Xrt::VERSION
   spec.authors       = ["hitode909"]
   spec.email         = ["hitode909@gmail.com"]
-  spec.summary       = %q{Xslate Refactoring Tool}
-  spec.homepage      = ""
+  spec.summary       = %q{Refactoring Tool for Text::Xslate}
+  spec.homepage      = 'https://github.com/hitode909/xrt'
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
-
-  spec.executables = ["xrt"]
 
   spec.add_development_dependency "bundler", "~> 1.7"
   spec.add_development_dependency "rake", "~> 10.0"
