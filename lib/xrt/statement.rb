@@ -21,6 +21,16 @@ module XRT
     def children
       []
     end
+
+    def replace_child(new_child, old_child)
+      children.each_with_index{|child, index|
+        if child.equal? old_child
+          children[index] = new_child
+          return old_child
+        end
+      }
+      nil
+    end
   end
 
   class Statement

@@ -50,6 +50,21 @@ class TestStatement < Test::Unit::TestCase
 
     assert_equal document.content, %q{ok[% foo %]}
   end
+
+  def test_replace_child
+    document = XRT::Statement::Document.new
+    s1 = XRT::Statement::Text.new('1')
+    s2 = XRT::Statement::Text.new('2')
+    s3 = XRT::Statement::Text.new('3')
+    document << s1
+
+    assert_nil document.replace_child(s2, s3),'when not found'
+    assert_equal '1', document.content, 'not changed'
+
+    replaced = document.replace_child(s2, s1)
+    assert_same replaced, s1
+    assert_equal '2', document.content, 'replaced'
+  end
 end
 
 class TestBlock < Test::Unit::TestCase
