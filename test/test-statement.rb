@@ -22,6 +22,7 @@ class TestStatement < Test::Unit::TestCase
     text = XRT::Statement::Text.new(<<'HTML')
 <html>
     <body>
+
     </body>
   </html>
 HTML
@@ -29,6 +30,7 @@ HTML
     assert_equal text.auto_indent, <<'HTML'
 <html>
   <body>
+
   </body>
 </html>
 HTML

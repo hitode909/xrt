@@ -53,7 +53,7 @@ module XRT
 
     def auto_indent
       lines = content.split(/\n/)[1..-1]
-      whitespaces = lines.map{|line| line.scan(/^\s+/).first }
+      whitespaces = lines.map{|line| line.scan(/^\s+/).first }.compact
       indent = whitespaces.sort_by{|whitespace| whitespace.length }.first
       content.gsub(/^#{indent}/, '')
     end
