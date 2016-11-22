@@ -38,8 +38,8 @@ module XRT
         @children
       end
 
-      def end
-        nil
+      def content
+        @content + children.map{|c| c.content }.join
       end
     end
   end

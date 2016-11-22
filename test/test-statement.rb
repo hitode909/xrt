@@ -25,7 +25,6 @@ class TestStatement < Test::Unit::TestCase
     assert text.kind_of? XRT::Statement
     assert_equal text.content, '[% IF 1 %]'
     assert_equal text.children, []
-    assert_nil text.end
   end
 end
 
@@ -48,5 +47,13 @@ class TestBlock < Test::Unit::TestCase
     assert_raises {
       block << statement_ok
     }
+  end
+
+  def test_content
+    block = XRT::Statement::Block.new('[% IF 1 %]')
+    block << XRT::Statement::Text.new('ok')
+    block << XRT::Statement::End.new('[% END %]')
+
+    assert_equal block.content, %q{[% IF 1 %]ok[% END %]}
   end
 end
