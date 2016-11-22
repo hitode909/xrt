@@ -9,7 +9,7 @@ module XRT
       syntax = XRT::Syntax.new
 
       current_level = 0
-      parser.statements.each{|statement|
+      parser.tokens.each{|statement|
         diff = syntax.block_level statement
         current_level += diff
         annotated_source += statement
@@ -35,7 +35,7 @@ module XRT
       max_level = 0
       current_level = 0
 
-      parser.statements.each{|statement|
+      parser.tokens.each{|statement|
         diff = syntax.block_level statement
         current_level += diff
         max_level = [ current_level, max_level].max

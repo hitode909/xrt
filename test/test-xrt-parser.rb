@@ -6,10 +6,10 @@ class TestXRTParser < Test::Unit::TestCase
     @parser = XRT::Parser.new
   end
 
-  def test_read_block
-    assert_equal '[% %]', @parser.read_block('[% %]')
-    assert_equal '[% [ ] %]', @parser.read_block('[% [ ] %]')
-    assert_nil @parser.read_block('hi')
+  def test_read_directive
+    assert_equal '[% %]', @parser.read_directive('[% %]')
+    assert_equal '[% [ ] %]', @parser.read_directive('[% [ ] %]')
+    assert_nil @parser.read_directive('hi')
   end
 
   def test_read_text
@@ -19,7 +19,7 @@ class TestXRTParser < Test::Unit::TestCase
     assert_nil @parser.read_text('[% %]')
   end
 
-  def test_statements
+  def test_tokens
     test_cases = [
       ['<html>', ['<html>']],
       ['a [% b %] c', ['a ', '[% b %]', ' c']],
@@ -38,7 +38,7 @@ class TestXRTParser < Test::Unit::TestCase
     test_cases.each{|test_case|
       input, expected = *test_case
       parser = XRT::Parser.new(input)
-      assert_equal expected, parser.statements
+      assert_equal expected, parser.tokens
     }
   end
 end

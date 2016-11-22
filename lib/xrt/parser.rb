@@ -4,12 +4,12 @@ module XRT
       @source = source
     end
 
-    def statements
+    def tokens
       reading = @source.clone
       result = []
 
       while reading.length > 0
-        got = read_block(reading) || read_text(reading)
+        got = read_directive(reading) || read_text(reading)
         unless got
           raise "failed to parse #{@source}"
         end
@@ -19,7 +19,7 @@ module XRT
       result
     end
 
-    def read_block source
+    def read_directive source
       return nil unless source[0...2] == '[%'
 
       buffer = ''
