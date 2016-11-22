@@ -1,3 +1,5 @@
+require 'xrt/statement'
+
 module XRT
   class Parser
     def initialize(source='')

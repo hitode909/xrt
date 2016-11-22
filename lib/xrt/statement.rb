@@ -59,6 +59,10 @@ module XRT
       def == other
         self.content == other.content && self.children.zip(other.children).all{|a, b| p [a, b]; a == b }
       end
+
+      def inspect
+        "<#{self.class}:#{self.children}>"
+      end
     end
 
     class Text < Statement
@@ -91,6 +95,10 @@ module XRT
 
       def content
         @content + children.map{|c| c.content }.join
+      end
+
+      def inspect
+        "<#{self.class}:#{@content},#{self.children}>"
       end
     end
   end
