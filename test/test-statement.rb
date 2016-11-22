@@ -95,6 +95,17 @@ class TestStatement < Test::Unit::TestCase
     assert_equal 1, document.depth(if_block_inner_text)
     assert_equal nil, document.depth(not_child)
   end
+
+  def test_find_blocks
+    document = XRT::Statement::Document.new
+    assert_equal [], document.find_blocks, 'when there is no block'
+
+    document << XRT::Statement::Text.new('1')
+    if_block = XRT::Statement::Block.new('[% IF a %]')
+    document << if_block
+
+    assert_equal [ if_block ], document.find_blocks, 'returns block'
+  end
 end
 
 class TestBlock < Test::Unit::TestCase
