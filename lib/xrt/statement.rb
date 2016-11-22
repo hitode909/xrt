@@ -9,6 +9,14 @@ module XRT
     def content
       @content
     end
+
+    def == other
+      self.class == other.class && self.content == other.content
+    end
+
+    def inspect
+      "<#{self.class}:#{self.content}>"
+    end
   end
 
   class Statement
@@ -46,6 +54,10 @@ module XRT
 
       def content
         children.map{|c| c.content }.join
+      end
+
+      def == other
+        self.content == other.content && self.children.zip(other.children).all{|a, b| p [a, b]; a == b }
       end
     end
 
