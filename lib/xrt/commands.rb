@@ -46,13 +46,24 @@ module XRT
 
         from_doc.replace_child(replace_to_node, found_block)
 
+        content_to_overwrite = from_doc.content
+        content_for_new_file = found_block.auto_indent
+
         open(from_file, 'w'){|f|
-          f.write from_doc.content
+          f.write content_to_overwrite
         }
 
-        open(Pathname(templates_directory).join(to_file_name), 'w'){|f|
-          f.puts found_block.auto_indent
+        new_file = Pathname(templates_directory).join(to_file_name)
+
+        if new_file.exist?
+          raise 'TO_FILE_NAME exists.'
+        end
+
+        open(new_file, 'w'){|f|
+          f.puts content_for_new_file
         }
+
+        true
       end
     end
   end
