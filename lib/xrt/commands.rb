@@ -1,3 +1,4 @@
+require 'pathname'
 require 'xrt/depth_checker'
 
 module XRT
@@ -49,7 +50,7 @@ module XRT
           f.write from_doc.content
         }
 
-        open("#{templates_directory}#{to_file_name}", 'w'){|f|
+        open(Pathname(templates_directory).join(to_file_name), 'w'){|f|
           f.puts found_block.auto_indent
         }
       end
