@@ -36,7 +36,7 @@ module XRT
     end
 
     def tokens
-      reading = @source.clone
+      reading = @source.dup
       result = []
 
       while reading.length > 0
