@@ -50,6 +50,13 @@ module XRT
         child.kind_of? XRT::Statement::Block
       }.concat(children.map{|child| child.find_blocks }.flatten)
     end
+
+    def auto_indent
+      lines = content.split(/\n/)[1..-1]
+      whitespaces = lines.map{|line| line.scan(/^\s+/).first }
+      indent = whitespaces.sort_by{|whitespace| whitespace.length }.first
+      content.gsub(/^#{indent}/, '')
+    end
   end
 
   class Statement

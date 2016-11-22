@@ -17,7 +17,7 @@ found = doc.find_blocks.select{|block|
 }.first
 
 if found
-  puts found.content
+  puts found.auto_indent
 else
   warn 'not found'
   exit 1

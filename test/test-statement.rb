@@ -18,6 +18,22 @@ class TestStatement < Test::Unit::TestCase
     assert_equal text.children, []
   end
 
+  def test_text_auto_indent
+    text = XRT::Statement::Text.new(<<'HTML')
+<html>
+    <body>
+    </body>
+  </html>
+HTML
+
+    assert_equal text.auto_indent, <<'HTML'
+<html>
+  <body>
+  </body>
+</html>
+HTML
+  end
+
   def test_directive
     text = XRT::Statement::End.new('[% foo() %]')
     assert text.kind_of? XRT::Statement
