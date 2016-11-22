@@ -3,9 +3,8 @@ require 'xrt/syntax'
 
 module XRT
   class DepthChecker
-    def check file
+    def check source
       annotated_source = ''
-      source = open(file).read
       parser = XRT::Parser.new(source)
       syntax = XRT::Syntax.new
 
