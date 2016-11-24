@@ -1,9 +1,7 @@
 module XRT
   class Transaction
-    attr_reader :directory
     attr_reader :files
-    def initialize(directory)
-      @directory = directory
+    def initialize
       @files = {}
     end
 
@@ -31,7 +29,7 @@ module XRT
     end
 
     def full_path(*fragments)
-      Pathname(directory).join(*fragments)
+      Pathname(fragments.shift).join(*fragments)
     end
 
     def commit!
