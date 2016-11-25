@@ -45,6 +45,10 @@ module XRT
       nil
     end
 
+    def statements
+      children.concat(children.map{|child| child.children }.flatten)
+    end
+
     def find_blocks
       children.select{|child|
         child.kind_of? XRT::Statement::Block

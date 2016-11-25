@@ -114,6 +114,18 @@ HTML
     assert_equal nil, document.depth(not_child)
   end
 
+  def test_statements
+    document = XRT::Statement::Document.new
+    assert_equal [], document.find_blocks, 'when there is no block'
+
+    text_block = XRT::Statement::Text.new('1')
+    document << text_block
+    if_block = XRT::Statement::Block.new('[% IF a %]')
+    document << if_block
+
+    assert_equal [ text_block, if_block ], document.statements, 'returns statements'
+  end
+
   def test_find_blocks
     document = XRT::Statement::Document.new
     assert_equal [], document.find_blocks, 'when there is no block'
