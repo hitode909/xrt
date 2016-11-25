@@ -12,6 +12,9 @@ module XRT
       when 'extract'
         success = XRT::Command::Extract.new.execute(*args)
         exit success ? 0 : 1
+      when 'lcs'
+        success = XRT::Command::LCS.new.execute(*args)
+        exit success ? 0 : 1
       else
         warn "command not found"
         exit 1
