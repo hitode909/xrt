@@ -3,7 +3,7 @@ require 'xrt/syntax'
 
 module XRT
   class DepthChecker
-    def check source
+    def check source, enable_color=nil
       annotated_source = ''
       parser = XRT::Parser.new(source)
       syntax = XRT::Syntax.new
@@ -14,8 +14,8 @@ module XRT
         current_level += diff
         annotated_source += statement
 
-        color = 44 + diff
-        if STDOUT.tty?
+        if enable_color
+          color = 44 + diff
           annotated_source += "\e[#{color}m#{current_level}\e[0m"
         else
           annotated_source += current_level.to_s

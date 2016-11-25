@@ -5,18 +5,18 @@ module XRT
     class Dump
       def execute(files)
         files.each{|file|
-          dump_file file
+          puts annotate_file file, STDOUT.tty?
         }
       end
 
-      def dump_file target_file
+      def annotate_file target_file, enable_color=nil
         warn "Dumping #{target_file}"
         checker = XRT::DepthChecker.new
-        parsed, annotated_source = checker.check open(target_file).read
-        puts annotated_source
+        parsed, annotated_source = checker.check open(target_file).read, enable_color
         unless parsed
-          raise "Failed to parser #{target_file} (#{index}/#{target_files.length})"
+          raise "Failed to parse #{target_file}"
         end
+        annotated_source
       end
     end
   end
