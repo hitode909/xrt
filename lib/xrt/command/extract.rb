@@ -1,5 +1,6 @@
 require 'pathname'
 require 'xrt/parser'
+require 'xrt/transaction'
 
 module XRT
   module Command
@@ -7,6 +8,7 @@ module XRT
     class Extract
       # xrt extract templates/blogs/index.html '[% IF pager' 'templates/' 'blogs/_pager.tt'
       def execute(from_file, target_block, templates_directory, to_file_name)
+        transaction = XRT::Transaction.new
         from_source = open(from_file).read
         parser = XRT::Parser.new(from_source)
         from_doc = parser.document
@@ -30,21 +32,15 @@ module XRT
         from_doc.replace_child(replace_to_node, found_block)
 
         content_to_overwrite = from_doc.content
-        content_for_new_file = found_block.auto_indent
+        content_for_new_file = found_block.auto_indent + "\n"
 
-        open(from_file, 'w'){|f|
-          f.write content_to_overwrite
-        }
+        transaction.edit from_file, content_to_overwrite
 
         new_file = Pathname(templates_directory).join(to_file_name)
 
-        if new_file.exist?
-          raise 'TO_FILE_NAME exists.'
-        end
+        transaction.new_file new_file, content_for_new_file
 
-        open(new_file, 'w'){|f|
-          f.puts content_for_new_file
-        }
+        transaction.commit!
 
         true
       end
