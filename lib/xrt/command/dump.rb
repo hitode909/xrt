@@ -10,7 +10,6 @@ module XRT
       end
 
       def annotate_file target_file, enable_color=nil
-        warn "Dumping #{target_file}"
         checker = XRT::DepthChecker.new
         parsed, annotated_source = checker.check open(target_file).read, enable_color
         unless parsed
