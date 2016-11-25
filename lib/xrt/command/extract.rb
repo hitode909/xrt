@@ -8,6 +8,12 @@ module XRT
     class Extract
       # xrt extract templates/blogs/index.html '[% IF pager' 'templates/' 'blogs/_pager.tt'
       def execute(from_file, target_block, templates_directory, to_file_name)
+        transaction = as_transaction(from_file, target_block, templates_directory, to_file_name)
+        transaction.commit!
+        true
+      end
+
+      def as_transaction(from_file, target_block, templates_directory, to_file_name)
         transaction = XRT::Transaction.new
         from_source = open(from_file).read
         parser = XRT::Parser.new(from_source)
@@ -36,13 +42,9 @@ module XRT
 
         transaction.edit from_file, content_to_overwrite
 
-        new_file = Pathname(templates_directory).join(to_file_name)
+        transaction.new_file transaction.full_path(templates_directory, to_file_name), content_for_new_file
 
-        transaction.new_file new_file, content_for_new_file
-
-        transaction.commit!
-
-        true
+        transaction
       end
     end
   end

@@ -41,7 +41,7 @@ module XRT
     end
 
     def add(path, content)
-      @files[path] = content
+      @files[path.to_s] = content
     end
   end
 end
