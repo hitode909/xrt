@@ -55,6 +55,12 @@ module XRT
       }.concat(children.map{|child| child.find_blocks }.flatten)
     end
 
+    def find_block_texts
+      children.select{|child|
+        child.kind_of?(XRT::Statement::Block) || child.kind_of?(XRT::Statement::Text)
+      }.concat(children.map{|child| child.find_block_texts }.flatten)
+    end
+
     def auto_indent
       lines = content.split(/\n/)[1..-1]
       whitespaces = lines.map{|line| line.scan(/^\s+/).first }.compact
