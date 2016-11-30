@@ -27,6 +27,8 @@ module XRT
           break
         when XRT::Statement::Text
           node << statement
+        when XRT::Statement::Whitespace
+          node << statement
         when XRT::Statement::Directive
           node << statement
         end
@@ -40,14 +42,29 @@ module XRT
       result = []
 
       while reading.length > 0
-        got = read_directive(reading) || read_text(reading)
-        unless got
+        if got = read_directive(reading)
+          result << got
+        elsif got = read_text(reading)
+          result.concat(split_whitespace(got))
+        else
           raise "failed to parse #{@source}"
         end
-        result << got
       end
 
       result
+    end
+
+    def split_whitespace(text)
+      prefix, suffix=nil
+      text.sub!(/\A(\s+)/) {|matched|
+        prefix = matched
+        ''
+      }
+      text.sub!(/(\s+)\Z/) {|matched|
+        suffix = matched
+        ''
+      }
+      [prefix, text, suffix].compact.delete_if{|s| s.empty?}
     end
 
     def read_directive source

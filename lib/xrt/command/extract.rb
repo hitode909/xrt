@@ -19,7 +19,7 @@ module XRT
         parser = XRT::Parser.new(from_source)
         from_doc = parser.document
 
-        found_blocks = from_doc.find_blocks.select{|block|
+        found_blocks = from_doc.find_block_texts.select{|block|
           block.content.index(target_block) == 0
         }
 

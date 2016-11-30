@@ -31,4 +31,39 @@ class TestCommandExtract < Test::Unit::TestCase
       }, transaction.files)
     }
   end
+
+  def test_extract_text
+    Dir.mktmpdir{|dir|
+      templates_dir = Pathname(dir).join('templates')
+      templates_dir.mkdir
+      templates_dir.join('a.html').open('w'){ |f| f.write <<'HTML' }
+<html>
+  [% a %]
+  <h1>
+    hi
+  </h1>
+  [% b %]
+</html>
+HTML
+
+      command = XRT::Command::Extract.new
+      transaction = command.as_transaction(templates_dir.join('a.html').to_s, %q{<h1>}, templates_dir.to_s, '_h1.tt')
+      assert_equal({
+        templates_dir.join('a.html').to_s => <<'HTML',
+<html>
+  [% a %]
+  [% INCLUDE "_h1.tt" %]
+  [% b %]
+</html>
+HTML
+
+        templates_dir.join('_h1.tt').to_s => <<'HTML',
+<h1>
+  hi
+</h1>
+HTML
+
+      }, transaction.files)
+    }
+  end
 end

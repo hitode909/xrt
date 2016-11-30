@@ -24,6 +24,19 @@ class TestParser < Test::Unit::TestCase
     ], doc.children
   end
 
+  def test_document_text_and_whitespace_directive
+    parser = XRT::Parser.new("1 [% 2 %]\n3")
+    doc = parser.document
+    assert doc.kind_of? XRT::Statement::Document
+    assert_equal [
+      XRT::Statement::Text.new('1'),
+      XRT::Statement::Whitespace.new(' '),
+      XRT::Statement::Directive.new('[% 2 %]'),
+      XRT::Statement::Whitespace.new("\n"),
+      XRT::Statement::Text.new('3'),
+    ], doc.children
+  end
+
   def test_document_block
     parser = XRT::Parser.new('[% IF a %]1[% END %]')
     doc = parser.document
@@ -58,16 +71,28 @@ class TestParser < Test::Unit::TestCase
   end
 
   def test_read_text
+    assert_equal '', @parser.read_text('')
     assert_equal 'hi', @parser.read_text('hi')
     assert_equal 'hi[', @parser.read_text('hi[')
     assert_equal 'hi', @parser.read_text('hi[%')
     assert_nil @parser.read_text('[% %]')
   end
 
+  def test_split_whitespace
+    assert_equal([], @parser.split_whitespace(""))
+    assert_equal([" "], @parser.split_whitespace(" "))
+    assert_equal(["\n"], @parser.split_whitespace("\n"))
+    assert_equal(["hi"], @parser.split_whitespace("hi"))
+    assert_equal(["hi there"], @parser.split_whitespace("hi there"))
+    assert_equal([" ", "hi", " "], @parser.split_whitespace(" hi "))
+    assert_equal([" \n", "hi", "\n "], @parser.split_whitespace(" \nhi\n "))
+    assert_equal(["\n", "xxx", "\n"], @parser.split_whitespace("\nxxx\n"))
+  end
+
   def test_tokens
     test_cases = [
       ['<html>', ['<html>']],
-      ['a [% b %] c', ['a ', '[% b %]', ' c']],
+      ['a [% b %] c', ['a', ' ', '[% b %]', ' ', 'c']],
       ['[% a %] [% b %] [% c %]', ['[% a %]', ' ', '[% b %]', ' ', '[% c %]']],
       ['[% FOR k IN [1, 2, 3] %]', ['[% FOR k IN [1, 2, 3] %]']],
       [

@@ -10,6 +10,13 @@ class TestSyntax < Test::Unit::TestCase
     assert_equal 'foo', @syntax.remove_comment('foo # bar')
   end
 
+  def test_whitespace?
+    assert @syntax.whitespace? ''
+    assert @syntax.whitespace? ' '
+    assert @syntax.whitespace? " \n"
+    assert_nil @syntax.whitespace? 'a'
+  end
+
   def test_beginning_block?
     assert @syntax.beginning_block? '[% IF 1 %]'
     assert @syntax.beginning_block? '[% if 1 %]'
