@@ -58,6 +58,7 @@ class TestParser < Test::Unit::TestCase
   end
 
   def test_read_text
+    assert_equal '', @parser.read_text('')
     assert_equal 'hi', @parser.read_text('hi')
     assert_equal 'hi[', @parser.read_text('hi[')
     assert_equal 'hi', @parser.read_text('hi[%')
@@ -65,6 +66,9 @@ class TestParser < Test::Unit::TestCase
   end
 
   def test_split_whitespace
+    assert_equal([], @parser.split_whitespace(""))
+    assert_equal([" "], @parser.split_whitespace(" "))
+    assert_equal(["\n"], @parser.split_whitespace("\n"))
     assert_equal(["hi"], @parser.split_whitespace("hi"))
     assert_equal(["hi there"], @parser.split_whitespace("hi there"))
     assert_equal([" ", "hi", " "], @parser.split_whitespace(" hi "))
