@@ -40,11 +40,13 @@ module XRT
       result = []
 
       while reading.length > 0
-        got = read_directive(reading) || read_text(reading)
-        unless got
+        if got = read_directive(reading)
+          result << got
+        elsif got = read_text(reading)
+          result.concat(split_whitespace(got))
+        else
           raise "failed to parse #{@source}"
         end
-        result << got
       end
 
       result
@@ -60,7 +62,7 @@ module XRT
         suffix = matched
         ''
       }
-      [prefix, text, suffix].compact
+      [prefix, text, suffix].compact.delete_if{|s| s.empty?}
     end
 
     def read_directive source

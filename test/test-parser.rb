@@ -74,7 +74,7 @@ class TestParser < Test::Unit::TestCase
   def test_tokens
     test_cases = [
       ['<html>', ['<html>']],
-      ['a [% b %] c', ['a ', '[% b %]', ' c']],
+      ['a [% b %] c', ['a', ' ', '[% b %]', ' ', 'c']],
       ['[% a %] [% b %] [% c %]', ['[% a %]', ' ', '[% b %]', ' ', '[% c %]']],
       ['[% FOR k IN [1, 2, 3] %]', ['[% FOR k IN [1, 2, 3] %]']],
       [
