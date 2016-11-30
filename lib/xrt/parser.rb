@@ -27,6 +27,8 @@ module XRT
           break
         when XRT::Statement::Text
           node << statement
+        when XRT::Statement::Whitespace
+          node << statement
         when XRT::Statement::Directive
           node << statement
         end
