@@ -2,7 +2,7 @@ require 'test/unit'
 require 'tmpdir'
 require 'xrt/command/dump'
 
-class TestParser < Test::Unit::TestCase
+class TestCommandDump < Test::Unit::TestCase
   def test_annotate
     Dir.mktmpdir{|dir|
       Pathname(dir).join('if1.pm').open('w'){ |f| f.write %q{[% IF 1 %]nested[% END %]} }
