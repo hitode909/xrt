@@ -1,5 +1,9 @@
 module XRT
   class Syntax
+    def whitespace? statement
+      statement.match(/\A\s*\Z/)
+    end
+
     def block? statement
       statement =~ /\A\[%.+%\]\Z/m
     end
