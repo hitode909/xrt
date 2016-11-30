@@ -50,6 +50,19 @@ module XRT
       result
     end
 
+    def split_whitespace(text)
+      prefix, suffix=nil
+      text.sub!(/\A(\s+)/) {|matched|
+        prefix = matched
+        ''
+      }
+      text.sub!(/(\s+)\Z/) {|matched|
+        suffix = matched
+        ''
+      }
+      [prefix, text, suffix].compact
+    end
+
     def read_directive source
       return nil unless source[0...2] == '[%'
 

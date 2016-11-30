@@ -64,6 +64,13 @@ class TestParser < Test::Unit::TestCase
     assert_nil @parser.read_text('[% %]')
   end
 
+  def test_split_whitespace
+    assert_equal(["hi"], @parser.split_whitespace("hi"))
+    assert_equal(["hi there"], @parser.split_whitespace("hi there"))
+    assert_equal([" ", "hi", " "], @parser.split_whitespace(" hi "))
+    assert_equal([" \n", "hi", "\n "], @parser.split_whitespace(" \nhi\n "))
+  end
+
   def test_tokens
     test_cases = [
       ['<html>', ['<html>']],
