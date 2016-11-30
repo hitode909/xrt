@@ -76,6 +76,8 @@ module XRT
           XRT::Statement::End.new content
         elsif syntax.block? content
           XRT::Statement::Directive.new content
+        elsif syntax.whitespace? content
+          XRT::Statement::Whitespace.new content
         else
           XRT::Statement::Text.new content
         end
@@ -110,6 +112,9 @@ module XRT
     end
 
     class Text < Statement
+    end
+
+    class Whitespace < Statement
     end
 
     class Directive < Statement
