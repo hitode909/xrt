@@ -71,6 +71,17 @@ HTML
     assert_equal tag_end.children, []
   end
 
+  def test_tag
+    tag = XRT::Statement::Tag.new('<')
+    assert tag.kind_of? XRT::Statement::Tag
+    assert_equal tag.children, [
+      XRT::Statement::TagStart.new('<')
+    ]
+    assert_false tag.closed?
+    tag << XRT::Statement::TagEnd.new('>')
+    assert tag.closed?
+  end
+
   def test_end
     text = XRT::Statement::End.new('[% END %]')
     assert text.kind_of? XRT::Statement
