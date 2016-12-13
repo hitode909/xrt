@@ -58,7 +58,7 @@ HTML
 
   def test_tag_end
     tag_end = XRT::Statement::TagEnd.new('<')
-    assert tag_end.kind_of? XRT::End
+    assert tag_end.kind_of? XRT::Statement::End
     assert_equal tag_end.content, '<'
     assert_equal tag_end.children, []
   end
