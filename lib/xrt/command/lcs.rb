@@ -7,10 +7,10 @@ module XRT
         lcs = collect(*files)
         if lcs.length > 0
           report = lcs.map{|statement|
-            header = "### Seen #{statement[:count]} times"
+            header = "### Seen #{statement[:count]} times, size: #{statement[:code].length}, mass: #{statement[:mass]}"
             list = statement[:locations].map{|location| "- #{location}" }.join("\n")
             quoted_code = ['```html', statement[:code], '```'].join("\n")
-            [header, list, quoted_code].join("\n\n")
+            [header, quoted_code, list].join("\n\n")
           }
           puts report.join("\n\n")
           true
@@ -34,12 +34,13 @@ module XRT
           {
             code: k,
             locations: v.sort,
-            count: v.length
+            count: v.length,
+            mass: k.length * v.length,
           }
         }.delete_if{|statement|
           statement[:count] == 1
         }.sort_by{|statement|
-          statement[:count]
+          statement[:mass]
         }.reverse
       end
 
