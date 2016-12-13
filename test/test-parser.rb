@@ -75,6 +75,8 @@ class TestParser < Test::Unit::TestCase
     assert_equal 'hi', @parser.read_text('hi')
     assert_equal 'hi[', @parser.read_text('hi[')
     assert_equal 'hi', @parser.read_text('hi[%')
+    assert_equal 'hi', @parser.read_text('hi<')
+    assert_equal 'hi', @parser.read_text('hi>')
     assert_nil @parser.read_text('[% %]')
   end
 

@@ -80,10 +80,14 @@ module XRT
 
     def read_text source
       return nil if source[0...2] == '[%'
+      return nil if source[0] == '<'
+      return nil if source[0] == '>'
 
       buffer = ''
       while true
         return buffer if source[0...2] == '[%'
+        return buffer if source[0] == '<'
+        return buffer if source[0] == '>'
         break if source.length < 2
         buffer << source.slice!(0)
       end
