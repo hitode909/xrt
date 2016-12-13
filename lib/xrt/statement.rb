@@ -83,7 +83,10 @@ module XRT
         elsif syntax.block? content
           XRT::Statement::Directive.new content
         elsif syntax.tag_start? content
-          XRT::Statement::TagStart.new content
+          tag = XRT::Statement::Tag.new
+          tag_start = XRT::Statement::TagStart.new content
+          tag << tag_start
+          tag
         elsif syntax.tag_end? content
           XRT::Statement::TagEnd.new content
         elsif syntax.whitespace? content
@@ -164,6 +167,12 @@ module XRT
 
       def inspect
         "<#{self.class}:#{@content},#{self.children}>"
+      end
+    end
+
+    class Tag < Block
+      def initialize
+        @children = []
       end
     end
   end
