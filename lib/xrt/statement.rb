@@ -123,6 +123,12 @@ module XRT
     class Whitespace < Statement
     end
 
+    class TagStart < Statement
+    end
+
+    class TagEnd < Statement
+    end
+
     class Directive < Statement
     end
 
