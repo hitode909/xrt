@@ -10,7 +10,14 @@ class TestCommandLCS < Test::Unit::TestCase
 
       command = XRT::Command::LCS.new
       lcs = command.collect(Pathname(dir).join('if1.pm').to_s, Pathname(dir).join('if2.pm').to_s)
-      assert_equal [%q{[% IF 1 %]nested[% END %]}], lcs
+      assert_equal [
+        {
+          code: %q{[% IF 1 %]nested[% END %]},
+          count: 2,
+          locations: [ Pathname(dir).join('if1.pm').to_s, Pathname(dir).join('if2.pm').to_s ],
+          mass: 50,
+        }
+      ], lcs
     }
   end
 end
