@@ -172,6 +172,7 @@ module XRT
 
     class Tag < Block
       def initialize
+        @content = ''
         @children = []
       end
     end
