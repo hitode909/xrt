@@ -133,13 +133,13 @@ module XRT
     class TagStart < Statement
     end
 
-    class TagEnd < Statement
-    end
-
     class Directive < Statement
     end
 
     class End < Directive
+    end
+
+    class TagEnd < End
     end
 
     class Block < Directive
