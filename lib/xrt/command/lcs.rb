@@ -45,7 +45,7 @@ module XRT
       end
 
       def statements(file)
-        XRT::Parser.new(open(file).read).document.find_blocks.map{|s| s.auto_indent }
+        XRT::Parser.new(open(file).read).document.find_blocks_with_directive.map{|s| s.auto_indent }
       end
     end
   end

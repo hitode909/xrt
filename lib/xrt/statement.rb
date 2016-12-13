@@ -15,7 +15,7 @@ module XRT
     end
 
     def inspect
-      "<#{self.class}:#{self.content}>"
+      "(#{self.class}:#{self.content})"
     end
 
     def children
@@ -50,8 +50,10 @@ module XRT
     end
 
     def contains_directive?
-      statements.any?{|s|
+      children.any?{|s|
          s.kind_of? XRT::Statement::Directive
+      } || children.any?{|c|
+        c.contains_directive?
       }
     end
 
@@ -59,6 +61,12 @@ module XRT
       children.select{|child|
         child.kind_of? XRT::Statement::Block
       }.concat(children.map{|child| child.find_blocks }.flatten)
+    end
+
+    def find_blocks_with_directive
+      children.select{|child|
+        child.kind_of?(XRT::Statement::Block) && child.contains_directive?
+      }.concat(children.map{|child| child.find_blocks_with_directive }.flatten)
     end
 
     def find_block_texts
@@ -123,7 +131,7 @@ module XRT
       end
 
       def inspect
-        "<#{self.class}:#{self.children}>"
+        "(#{self.class}:#{self.children})"
       end
     end
 
@@ -139,13 +147,13 @@ module XRT
     class Directive < Statement
     end
 
-    class End < Directive
+    class End < Statement
     end
 
     class TagEnd < End
     end
 
-    class Block < Directive
+    class Block < Statement
       def initialize(content)
         @children = []
 
@@ -170,7 +178,7 @@ module XRT
       end
 
       def inspect
-        "<#{self.class}:#{self.children}>"
+        "(#{self.class}:#{self.children})"
       end
     end
 
