@@ -82,6 +82,10 @@ module XRT
           XRT::Statement::End.new content
         elsif syntax.block? content
           XRT::Statement::Directive.new content
+        elsif syntax.tag_start? content
+          XRT::Statement::TagStart.new content
+        elsif syntax.tag_end? content
+          XRT::Statement::TagEnd.new content
         elsif syntax.whitespace? content
           XRT::Statement::Whitespace.new content
         else
