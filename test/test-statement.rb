@@ -6,8 +6,13 @@ class TestStatementFactory < Test::Unit::TestCase
     assert XRT::Statement::Factory.new_from_content('hi').kind_of? XRT::Statement::Text
     assert XRT::Statement::Factory.new_from_content(' ').kind_of? XRT::Statement::Whitespace
     assert XRT::Statement::Factory.new_from_content('[% foo %]').kind_of? XRT::Statement::Directive
-    assert XRT::Statement::Factory.new_from_content('[% IF 1 %]').kind_of? XRT::Statement::Block
     assert XRT::Statement::Factory.new_from_content('[% foo IF 1 %]').kind_of? XRT::Statement::Directive
+
+    block = XRT::Statement::Factory.new_from_content('[% IF 1 %]')
+    assert block.kind_of? XRT::Statement::Block
+    assert_equal block.children, [
+      XRT::Statement::Directive.new('[% IF 1 %]')
+    ]
 
     tag = XRT::Statement::Factory.new_from_content('<')
     assert tag.kind_of? XRT::Statement::Tag
@@ -74,10 +79,11 @@ HTML
   end
 
   def test_block
-    text = XRT::Statement::Block.new('[% IF 1 %]')
-    assert text.kind_of? XRT::Statement
-    assert_equal text.content, '[% IF 1 %]'
-    assert_equal text.children, []
+    block = XRT::Statement::Block.new('[% IF 1 %]')
+    assert block.kind_of? XRT::Statement
+    assert_equal block.children, [
+      XRT::Statement::Directive.new('[% IF 1 %]')
+    ]
   end
 
   def test_document
@@ -145,8 +151,9 @@ HTML
     document << text_block
     if_block = XRT::Statement::Block.new('[% IF a %]')
     document << if_block
+    if_directive = XRT::Statement::Directive.new('[% IF a %]')
 
-    assert_equal [ text_block, if_block ], document.statements, 'returns statements'
+    assert_equal [ text_block, if_block, if_directive ], document.statements, 'returns statements'
   end
 
   def test_find_blocks
@@ -166,6 +173,7 @@ class TestBlock < Test::Unit::TestCase
     block = XRT::Statement::Block.new('[% IF 1 %]')
     assert_equal false, block.closed?
 
+    statement_if = XRT::Statement::Directive.new('[% IF 1 %]')
     statement_ok = XRT::Statement::Text.new('ok')
     statement_end = XRT::Statement::End.new('[% END %]')
 
@@ -175,7 +183,7 @@ class TestBlock < Test::Unit::TestCase
     block << statement_end
     assert_equal true, block.closed?
 
-    assert_equal block.children, [statement_ok, statement_end]
+    assert_equal block.children, [statement_if, statement_ok, statement_end]
 
     assert_raises {
       block << statement_ok

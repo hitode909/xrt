@@ -144,8 +144,10 @@ module XRT
 
     class Block < Directive
       def initialize(content)
-        super
+        @content = ''
         @children = []
+
+        self << Directive.new(content)
       end
 
       def closed?
