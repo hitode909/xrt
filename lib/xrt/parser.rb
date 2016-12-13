@@ -44,6 +44,10 @@ module XRT
       while reading.length > 0
         if got = read_directive(reading)
           result << got
+        elsif got = read_tag_start(reading)
+          result << got
+        elsif got = read_tag_end(reading)
+          result << got
         elsif got = read_text(reading)
           result.concat(split_whitespace(got))
         else

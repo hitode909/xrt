@@ -105,7 +105,7 @@ class TestParser < Test::Unit::TestCase
 
   def test_tokens
     test_cases = [
-      ['<html>', ['<html>']],
+      ['<html>', ['<', 'html', '>']],
       ['a [% b %] c', ['a', ' ', '[% b %]', ' ', 'c']],
       ['[% a %] [% b %] [% c %]', ['[% a %]', ' ', '[% b %]', ' ', '[% c %]']],
       ['[% FOR k IN [1, 2, 3] %]', ['[% FOR k IN [1, 2, 3] %]']],
@@ -113,7 +113,7 @@ class TestParser < Test::Unit::TestCase
         %q([% WRAPPER "wrapper.tt" WITH args = [1,2,3] %]<div></div>[% END %]),
         [
           %q([% WRAPPER "wrapper.tt" WITH args = [1,2,3] %]),
-          %q(<div></div>),
+          *%w(< div > < /div >),
           %q([% END %]),
         ]
       ],
