@@ -15,7 +15,7 @@ module XRT
     end
 
     def inspect
-      "<#{self.class}:#{self.content}>"
+      "(#{self.class}:#{self.content})"
     end
 
     def children
@@ -49,10 +49,24 @@ module XRT
       children.concat(children.map{|child| child.children }.flatten)
     end
 
+    def contains_directive?
+      children.any?{|s|
+         s.kind_of? XRT::Statement::Directive
+      } || children.any?{|c|
+        c.contains_directive?
+      }
+    end
+
     def find_blocks
       children.select{|child|
         child.kind_of? XRT::Statement::Block
       }.concat(children.map{|child| child.find_blocks }.flatten)
+    end
+
+    def find_blocks_with_directive
+      children.select{|child|
+        child.kind_of?(XRT::Statement::Block) && child.contains_directive?
+      }.concat(children.map{|child| child.find_blocks_with_directive }.flatten)
     end
 
     def find_block_texts
@@ -82,6 +96,10 @@ module XRT
           XRT::Statement::End.new content
         elsif syntax.block? content
           XRT::Statement::Directive.new content
+        elsif syntax.tag_start? content
+          XRT::Statement::Tag.new content
+        elsif syntax.tag_end? content
+          XRT::Statement::TagEnd.new content
         elsif syntax.whitespace? content
           XRT::Statement::Whitespace.new content
         else
@@ -113,7 +131,7 @@ module XRT
       end
 
       def inspect
-        "<#{self.class}:#{self.children}>"
+        "(#{self.class}:#{self.children})"
       end
     end
 
@@ -123,16 +141,23 @@ module XRT
     class Whitespace < Statement
     end
 
+    class TagStart < Statement
+    end
+
     class Directive < Statement
     end
 
-    class End < Directive
+    class End < Statement
     end
 
-    class Block < Directive
+    class TagEnd < End
+    end
+
+    class Block < Statement
       def initialize(content)
-        super
         @children = []
+
+        self << Directive.new(content)
       end
 
       def closed?
@@ -149,11 +174,19 @@ module XRT
       end
 
       def content
-        @content + children.map{|c| c.content }.join
+        children.map{|c| c.content }.join
       end
 
       def inspect
-        "<#{self.class}:#{@content},#{self.children}>"
+        "(#{self.class}:#{self.children})"
+      end
+    end
+
+    class Tag < Block
+      def initialize content
+        @children = []
+        tag_start = XRT::Statement::TagStart.new content
+        self << tag_start
       end
     end
   end

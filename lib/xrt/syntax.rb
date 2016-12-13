@@ -4,6 +4,14 @@ module XRT
       statement.match(/\A\s*\Z/)
     end
 
+    def tag_start? statement
+      statement == '<'
+    end
+
+    def tag_end? statement
+      statement == '>'
+    end
+
     def block? statement
       statement =~ /\A\[%.+%\]\Z/m
     end

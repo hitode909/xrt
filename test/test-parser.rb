@@ -49,20 +49,32 @@ class TestParser < Test::Unit::TestCase
     ], doc.children
   end
 
-    def test_document_nested_block
-      parser = XRT::Parser.new('[% IF a %][% IF b %]1[% END %][% END %]')
-      doc = parser.document
-      assert doc.kind_of? XRT::Statement::Document
-      if_block1 = XRT::Statement::Block.new('[% IF a %]')
-      if_block2 = XRT::Statement::Block.new('[% IF b %]')
-      if_block2 << XRT::Statement::Text.new('1')
-      if_block2 << XRT::Statement::Text.new('[% END %]')
-      if_block1 << if_block2
-      if_block1 << XRT::Statement::Text.new('[% END %]')
-      assert_equal [
-        if_block1
-      ], doc.children
-    end
+  def test_document_nested_block
+    parser = XRT::Parser.new('[% IF a %][% IF b %]1[% END %][% END %]')
+    doc = parser.document
+    assert doc.kind_of? XRT::Statement::Document
+    if_block1 = XRT::Statement::Block.new('[% IF a %]')
+    if_block2 = XRT::Statement::Block.new('[% IF b %]')
+    if_block2 << XRT::Statement::Text.new('1')
+    if_block2 << XRT::Statement::Text.new('[% END %]')
+    if_block1 << if_block2
+    if_block1 << XRT::Statement::Text.new('[% END %]')
+    assert_equal [
+      if_block1
+    ], doc.children
+  end
+
+  def test_document_tag
+    parser = XRT::Parser.new('<div>')
+    doc = parser.document
+    assert doc.kind_of? XRT::Statement::Document
+    tag = XRT::Statement::Tag.new '<'
+    tag << XRT::Statement::Text.new('div')
+    tag << XRT::Statement::TagEnd.new('>')
+    assert_equal [
+      tag
+    ], doc.children
+  end
 
   def test_read_directive
     assert_equal '[% %]', @parser.read_directive('[% %]')
@@ -75,7 +87,21 @@ class TestParser < Test::Unit::TestCase
     assert_equal 'hi', @parser.read_text('hi')
     assert_equal 'hi[', @parser.read_text('hi[')
     assert_equal 'hi', @parser.read_text('hi[%')
+    assert_equal 'hi', @parser.read_text('hi<')
+    assert_equal 'hi', @parser.read_text('hi>')
     assert_nil @parser.read_text('[% %]')
+  end
+
+  def test_read_tag_start
+    assert_equal '<', @parser.read_tag_start('<')
+    assert_equal '<', @parser.read_tag_start('<div')
+    assert_nil @parser.read_tag_start('hi')
+  end
+
+  def test_read_tag_end
+    assert_equal '>', @parser.read_tag_end('>')
+    assert_equal '>', @parser.read_tag_end('>>')
+    assert_nil @parser.read_tag_end('hi')
   end
 
   def test_split_whitespace
@@ -91,7 +117,7 @@ class TestParser < Test::Unit::TestCase
 
   def test_tokens
     test_cases = [
-      ['<html>', ['<html>']],
+      ['<html>', ['<', 'html', '>']],
       ['a [% b %] c', ['a', ' ', '[% b %]', ' ', 'c']],
       ['[% a %] [% b %] [% c %]', ['[% a %]', ' ', '[% b %]', ' ', '[% c %]']],
       ['[% FOR k IN [1, 2, 3] %]', ['[% FOR k IN [1, 2, 3] %]']],
@@ -99,7 +125,7 @@ class TestParser < Test::Unit::TestCase
         %q([% WRAPPER "wrapper.tt" WITH args = [1,2,3] %]<div></div>[% END %]),
         [
           %q([% WRAPPER "wrapper.tt" WITH args = [1,2,3] %]),
-          %q(<div></div>),
+          *%w(< div > < /div >),
           %q([% END %]),
         ]
       ],

@@ -25,11 +25,7 @@ module XRT
         when XRT::Statement::End
           node << statement
           break
-        when XRT::Statement::Text
-          node << statement
-        when XRT::Statement::Whitespace
-          node << statement
-        when XRT::Statement::Directive
+        else
           node << statement
         end
       end
@@ -43,6 +39,10 @@ module XRT
 
       while reading.length > 0
         if got = read_directive(reading)
+          result << got
+        elsif got = read_tag_start(reading)
+          result << got
+        elsif got = read_tag_end(reading)
           result << got
         elsif got = read_text(reading)
           result.concat(split_whitespace(got))
@@ -80,10 +80,14 @@ module XRT
 
     def read_text source
       return nil if source[0...2] == '[%'
+      return nil if source[0] == '<'
+      return nil if source[0] == '>'
 
       buffer = ''
       while true
         return buffer if source[0...2] == '[%'
+        return buffer if source[0] == '<'
+        return buffer if source[0] == '>'
         break if source.length < 2
         buffer << source.slice!(0)
       end
@@ -91,6 +95,16 @@ module XRT
       buffer << source.slice!(0, source.length)
 
       buffer
+    end
+
+    def read_tag_start source
+      return nil unless source[0] == '<'
+      source.slice!(0)
+    end
+
+    def read_tag_end source
+      return nil unless source[0] == '>'
+      source.slice!(0)
     end
   end
 end

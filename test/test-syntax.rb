@@ -17,6 +17,16 @@ class TestSyntax < Test::Unit::TestCase
     assert_nil @syntax.whitespace? 'a'
   end
 
+  def test_tag_start?
+    assert @syntax.tag_start? '<'
+    assert_false @syntax.tag_start? 'a'
+  end
+
+  def test_tag_end?
+    assert @syntax.tag_end? '>'
+    assert_false @syntax.tag_end? 'a'
+  end
+
   def test_beginning_block?
     assert @syntax.beginning_block? '[% IF 1 %]'
     assert @syntax.beginning_block? '[% if 1 %]'

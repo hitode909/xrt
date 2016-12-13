@@ -6,8 +6,10 @@ class TestStatementFactory < Test::Unit::TestCase
     assert XRT::Statement::Factory.new_from_content('hi').kind_of? XRT::Statement::Text
     assert XRT::Statement::Factory.new_from_content(' ').kind_of? XRT::Statement::Whitespace
     assert XRT::Statement::Factory.new_from_content('[% foo %]').kind_of? XRT::Statement::Directive
-    assert XRT::Statement::Factory.new_from_content('[% IF 1 %]').kind_of? XRT::Statement::Block
     assert XRT::Statement::Factory.new_from_content('[% foo IF 1 %]').kind_of? XRT::Statement::Directive
+    assert XRT::Statement::Factory.new_from_content('[% IF 1 %]').kind_of? XRT::Statement::Block
+    assert XRT::Statement::Factory.new_from_content('<').kind_of? XRT::Statement::Tag
+    assert XRT::Statement::Factory.new_from_content('>').kind_of? XRT::Statement::TagEnd
   end
 end
 
@@ -44,6 +46,43 @@ HTML
     assert_equal text.children, []
   end
 
+  def test_tag_start
+    tag_start = XRT::Statement::TagStart.new('<')
+    assert tag_start.kind_of? XRT::Statement
+    assert_equal tag_start.content, '<'
+    assert_equal tag_start.children, []
+  end
+
+  def test_tag_end
+    tag_end = XRT::Statement::TagEnd.new('<')
+    assert tag_end.kind_of? XRT::Statement::End
+    assert_equal tag_end.content, '<'
+    assert_equal tag_end.children, []
+  end
+
+  def test_tag
+    tag = XRT::Statement::Tag.new('<')
+    assert tag.kind_of? XRT::Statement::Tag
+    assert_equal tag.children, [
+      XRT::Statement::TagStart.new('<')
+    ]
+    assert_false tag.closed?
+    tag << XRT::Statement::TagEnd.new('>')
+    assert tag.closed?
+  end
+
+  def test_tag_contains_directive?
+    tag = XRT::Statement::Tag.new('<')
+    assert_false tag.contains_directive?
+
+    tag << XRT::Statement::Text.new('div')
+    assert_false tag.contains_directive?
+
+    tag << XRT::Statement::Directive.new('[% foo %]')
+    assert tag.contains_directive?
+  end
+
+
   def test_end
     text = XRT::Statement::End.new('[% END %]')
     assert text.kind_of? XRT::Statement
@@ -52,10 +91,11 @@ HTML
   end
 
   def test_block
-    text = XRT::Statement::Block.new('[% IF 1 %]')
-    assert text.kind_of? XRT::Statement
-    assert_equal text.content, '[% IF 1 %]'
-    assert_equal text.children, []
+    block = XRT::Statement::Block.new('[% IF 1 %]')
+    assert block.kind_of? XRT::Statement
+    assert_equal block.children, [
+      XRT::Statement::Directive.new('[% IF 1 %]')
+    ]
   end
 
   def test_document
@@ -123,8 +163,9 @@ HTML
     document << text_block
     if_block = XRT::Statement::Block.new('[% IF a %]')
     document << if_block
+    if_directive = XRT::Statement::Directive.new('[% IF a %]')
 
-    assert_equal [ text_block, if_block ], document.statements, 'returns statements'
+    assert_equal [ text_block, if_block, if_directive ], document.statements, 'returns statements'
   end
 
   def test_find_blocks
@@ -144,6 +185,7 @@ class TestBlock < Test::Unit::TestCase
     block = XRT::Statement::Block.new('[% IF 1 %]')
     assert_equal false, block.closed?
 
+    statement_if = XRT::Statement::Directive.new('[% IF 1 %]')
     statement_ok = XRT::Statement::Text.new('ok')
     statement_end = XRT::Statement::End.new('[% END %]')
 
@@ -153,7 +195,7 @@ class TestBlock < Test::Unit::TestCase
     block << statement_end
     assert_equal true, block.closed?
 
-    assert_equal block.children, [statement_ok, statement_end]
+    assert_equal block.children, [statement_if, statement_ok, statement_end]
 
     assert_raises {
       block << statement_ok
