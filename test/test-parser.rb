@@ -68,8 +68,7 @@ class TestParser < Test::Unit::TestCase
     parser = XRT::Parser.new('<div>')
     doc = parser.document
     assert doc.kind_of? XRT::Statement::Document
-    tag = XRT::Statement::Tag.new
-    tag << XRT::Statement::TagStart.new('<')
+    tag = XRT::Statement::Tag.new '<'
     tag << XRT::Statement::Text.new('div')
     tag << XRT::Statement::TagEnd.new('>')
     assert_equal [

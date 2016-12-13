@@ -83,10 +83,7 @@ module XRT
         elsif syntax.block? content
           XRT::Statement::Directive.new content
         elsif syntax.tag_start? content
-          tag = XRT::Statement::Tag.new
-          tag_start = XRT::Statement::TagStart.new content
-          tag << tag_start
-          tag
+          XRT::Statement::Tag.new content
         elsif syntax.tag_end? content
           XRT::Statement::TagEnd.new content
         elsif syntax.whitespace? content
@@ -172,9 +169,10 @@ module XRT
     end
 
     class Tag < Block
-      def initialize
-        @content = ''
+      def initialize content
         @children = []
+        tag_start = XRT::Statement::TagStart.new content
+        self << tag_start
       end
     end
   end
