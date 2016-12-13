@@ -8,10 +8,13 @@ class TestStatementFactory < Test::Unit::TestCase
     assert XRT::Statement::Factory.new_from_content('[% foo %]').kind_of? XRT::Statement::Directive
     assert XRT::Statement::Factory.new_from_content('[% IF 1 %]').kind_of? XRT::Statement::Block
     assert XRT::Statement::Factory.new_from_content('[% foo IF 1 %]').kind_of? XRT::Statement::Directive
-    assert XRT::Statement::Factory.new_from_content('<').kind_of? XRT::Statement::Tag
-    assert_equal XRT::Statement::Factory.new_from_content('<').children, [
+
+    tag = XRT::Statement::Factory.new_from_content('<')
+    assert tag.kind_of? XRT::Statement::Tag
+    assert_equal tag.children, [
       XRT::Statement::TagStart.new('<')
     ]
+
     assert XRT::Statement::Factory.new_from_content('>').kind_of? XRT::Statement::TagEnd
   end
 end
