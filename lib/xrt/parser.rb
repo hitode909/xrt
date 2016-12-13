@@ -92,5 +92,15 @@ module XRT
 
       buffer
     end
+
+    def read_tag_start source
+      return nil unless source[0] == '<'
+      source.slice!(0)
+    end
+
+    def read_tag_end source
+      return nil unless source[0] == '>'
+      source.slice!(0)
+    end
   end
 end

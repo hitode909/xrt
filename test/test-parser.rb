@@ -78,6 +78,16 @@ class TestParser < Test::Unit::TestCase
     assert_nil @parser.read_text('[% %]')
   end
 
+  def test_read_tag_start
+    assert_equal '<', @parser.read_tag_start('<')
+    assert_nil @parser.read_tag_start('hi')
+  end
+
+  def test_read_tag_end
+    assert_equal '>', @parser.read_tag_end('>')
+    assert_nil @parser.read_tag_end('hi')
+  end
+
   def test_split_whitespace
     assert_equal([], @parser.split_whitespace(""))
     assert_equal([" "], @parser.split_whitespace(" "))
