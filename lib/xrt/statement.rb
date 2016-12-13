@@ -144,7 +144,6 @@ module XRT
 
     class Block < Directive
       def initialize(content)
-        @content = ''
         @children = []
 
         self << Directive.new(content)
@@ -164,11 +163,11 @@ module XRT
       end
 
       def content
-        @content + children.map{|c| c.content }.join
+        children.map{|c| c.content }.join
       end
 
       def inspect
-        "<#{self.class}:#{@content},#{self.children}>"
+        "<#{self.class}:#{self.children}>"
       end
     end
 
