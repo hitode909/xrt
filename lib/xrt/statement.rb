@@ -49,6 +49,12 @@ module XRT
       children.concat(children.map{|child| child.children }.flatten)
     end
 
+    def contains_directive?
+      statements.any?{|s|
+         s.kind_of? XRT::Statement::Directive
+      }
+    end
+
     def find_blocks
       children.select{|child|
         child.kind_of? XRT::Statement::Block

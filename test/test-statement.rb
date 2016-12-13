@@ -71,6 +71,18 @@ HTML
     assert tag.closed?
   end
 
+  def test_tag_contains_directive?
+    tag = XRT::Statement::Tag.new('<')
+    assert_false tag.contains_directive?
+
+    tag << XRT::Statement::Text.new('div')
+    assert_false tag.contains_directive?
+
+    tag << XRT::Statement::Directive.new('[% foo %]')
+    assert tag.contains_directive?
+  end
+
+
   def test_end
     text = XRT::Statement::End.new('[% END %]')
     assert text.kind_of? XRT::Statement
