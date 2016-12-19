@@ -188,6 +188,18 @@ module XRT
         tag_start = XRT::Statement::TagStart.new content
         self << tag_start
       end
+
+      def tag_opening?
+        !tag_independent? && !tag_closing?
+      end
+
+      def tag_closing?
+        @children[1].content[0] == '/'
+      end
+
+      def tag_independent?
+        @children[-2].content[-1] == '/'
+      end
     end
   end
 end

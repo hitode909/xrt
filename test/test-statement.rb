@@ -210,3 +210,31 @@ class TestBlock < Test::Unit::TestCase
     assert_equal block.content, %q{[% IF 1 %]ok[% END %]}
   end
 end
+
+class TestTag < Test::Unit::TestCase
+  def test_opening_tag
+    tag = XRT::Statement::Tag.new('<')
+    tag << XRT::Statement::Text.new('div')
+    tag << XRT::Statement::TagEnd.new('>')
+    assert tag.tag_opening?
+    assert_false tag.tag_closing?
+  end
+
+  def test_closing_tag
+    tag = XRT::Statement::Tag.new('<')
+    tag << XRT::Statement::Text.new('/div')
+    tag << XRT::Statement::TagEnd.new('>')
+    assert_false tag.tag_opening?
+    assert tag.tag_closing?
+  end
+
+  def test_independent_tag
+    tag = XRT::Statement::Tag.new('<')
+    tag << XRT::Statement::Text.new('div/')
+    tag << XRT::Statement::TagEnd.new('>')
+    assert_false tag.tag_opening?
+    assert_false tag.tag_closing?
+    assert tag.tag_independent?
+  end
+
+end
