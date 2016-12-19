@@ -165,7 +165,7 @@ module XRT
       end
 
       def << statement
-        raise "trying to push_child to closed block: #{self.inspect} << #{statement.inspect}" if closed?
+        raise "trying to push_child to closed block: #{self.class} #{self.content} (last: #{children.last.inspect}) << #{statement.content}" if closed?
         @children << statement
       end
 

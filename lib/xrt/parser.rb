@@ -15,31 +15,54 @@ module XRT
       doc
     end
 
+    def pi message
+      return
+      indent = "  " * (caller.length-9)
+      print indent
+      puts message
+    end
+
     def parse_contents(tokenized, node)
+      pi "parse contents to #{node.inspect}"
       while tokenized.length > 0
         statement = XRT::Statement::Factory.new_from_content(tokenized.shift)
+        pi "reading #{statement.inspect}"
 
         case statement
         when XRT::Statement::Tag
           parse_contents(tokenized, statement)
           if statement.tag_opening?
             statement = XRT::Statement::TagPair.new(statement)
+            pi "open! #{statement.inspect}"
           elsif statement.tag_closing?
             statement = XRT::Statement::TagPairEnd.new(statement)
+            pi "close! #{statement.inspect}"
+          else
+            pi "else"
           end
+        end
+
+        if node.kind_of?(XRT::Statement::Block) && node.closed?
+          pi "seems closed"
+          break
         end
 
         case statement
         when XRT::Statement::Block
+          pi "parsing block"
           parse_contents(tokenized, statement)
           node << statement
         when XRT::Statement::End
+          pi "reached end"
           node << statement
           break
         else
+          pi "push content"
           node << statement
         end
       end
+
+      pi "parsed #{node.content.to_s}"
 
       node
     end
