@@ -18,6 +18,17 @@ module XRT
     def parse_contents(tokenized, node)
       while tokenized.length > 0
         statement = XRT::Statement::Factory.new_from_content(tokenized.shift)
+
+        case statement
+        when XRT::Statement::Tag
+          parse_contents(tokenized, statement)
+          if statement.tag_opening?
+            statement = XRT::Statement::TagPair.new(statement)
+          elsif statement.tag_closing?
+            statement = XRT::Statement::TagPairEnd.new(statement)
+          end
+        end
+
         case statement
         when XRT::Statement::Block
           parse_contents(tokenized, statement)

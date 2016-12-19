@@ -201,5 +201,21 @@ module XRT
         @children[-2].content[-1] == '/'
       end
     end
+
+    class TagPair < Block
+      def initialize tag
+        @children = [ tag ]
+      end
+    end
+
+    class TagPairEnd < End
+      def content
+        @content.content
+      end
+
+      def inspect
+      "(#{self.class}:#{@content.inspect})"
+      end
+    end
   end
 end
