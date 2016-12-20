@@ -92,30 +92,6 @@ module XRT
   end
 
   class Statement
-    module Factory
-      def self.new_from_content content
-        syntax = XRT::Syntax.new
-
-        block_level = syntax.block_level content
-
-        if block_level == 1
-          XRT::Statement::Block.new content
-        elsif block_level == -1
-          XRT::Statement::End.new content
-        elsif syntax.block? content
-          XRT::Statement::Directive.new content
-        elsif syntax.tag_start? content
-          XRT::Statement::Tag.new content
-        elsif syntax.tag_end? content
-          XRT::Statement::TagEnd.new content
-        elsif syntax.whitespace? content
-          XRT::Statement::Whitespace.new content
-        else
-          XRT::Statement::Text.new content
-        end
-      end
-
-    end
 
     class Document < Statement
       def initialize

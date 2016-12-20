@@ -6,6 +6,18 @@ class TestParser < Test::Unit::TestCase
     @parser = XRT::Parser.new
   end
 
+  def test_new_statement
+    parser = XRT::Parser.new('')
+
+    assert parser.new_statement('hi').kind_of? XRT::Statement::Text
+    assert parser.new_statement(' ').kind_of? XRT::Statement::Whitespace
+    assert parser.new_statement('[% foo %]').kind_of? XRT::Statement::Directive
+    assert parser.new_statement('[% foo IF 1 %]').kind_of? XRT::Statement::Directive
+    assert parser.new_statement('[% IF 1 %]').kind_of? XRT::Statement::Block
+    assert parser.new_statement('<').kind_of? XRT::Statement::Tag
+    assert parser.new_statement('>').kind_of? XRT::Statement::TagEnd
+  end
+
   def test_document_empty
     parser = XRT::Parser.new('')
     doc = parser.document
