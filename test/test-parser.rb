@@ -55,7 +55,7 @@ class TestParser < Test::Unit::TestCase
     assert doc.kind_of? XRT::Statement::Document
     if_block = XRT::Statement::Block.new('[% IF a %]')
     if_block << XRT::Statement::Text.new('1')
-    if_block << XRT::Statement::Text.new('[% END %]')
+    if_block << XRT::Statement::End.new('[% END %]')
     assert_equal [
       if_block
     ], doc.children
@@ -68,9 +68,9 @@ class TestParser < Test::Unit::TestCase
     if_block1 = XRT::Statement::Block.new('[% IF a %]')
     if_block2 = XRT::Statement::Block.new('[% IF b %]')
     if_block2 << XRT::Statement::Text.new('1')
-    if_block2 << XRT::Statement::Text.new('[% END %]')
+    if_block2 << XRT::Statement::End.new('[% END %]')
     if_block1 << if_block2
-    if_block1 << XRT::Statement::Text.new('[% END %]')
+    if_block1 << XRT::Statement::End.new('[% END %]')
     assert_equal [
       if_block1
     ], doc.children
@@ -125,14 +125,14 @@ class TestParser < Test::Unit::TestCase
     tag_start << XRT::Statement::Text.new('script')
     tag_start << XRT::Statement::TagEnd.new('>')
 
-    text = XRT::Statement::Text.new('1<2')
-
     tag_close = XRT::Statement::Tag.new '<'
     tag_close << XRT::Statement::Text.new('/script')
     tag_close << XRT::Statement::TagEnd.new('>')
 
     tag_pair = XRT::Statement::TagPair.new(tag_start)
-    tag_pair << text
+    tag_pair << XRT::Statement::Text.new('1')
+    tag_pair << XRT::Statement::Text.new('<')
+    tag_pair << XRT::Statement::Text.new('2')
     tag_pair << XRT::Statement::TagPairEnd.new(tag_close)
 
     assert_equal [
