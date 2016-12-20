@@ -262,6 +262,8 @@ class TestTag < Test::Unit::TestCase
       tag << XRT::Statement::Text.new(tag_name)
       tag << XRT::Statement::TagEnd.new('>')
       assert_equal expect, tag.tag_void_element?
+
+      assert_equal !expect, tag.tag_opening?, 'void element is not open'
     }
   end
 

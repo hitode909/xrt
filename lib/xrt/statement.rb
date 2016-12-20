@@ -200,7 +200,7 @@ module XRT
       end
 
       def tag_opening?
-        !tag_independent? && !tag_closing?
+        !tag_independent? && !tag_closing? && !tag_void_element?
       end
 
       def tag_closing?
