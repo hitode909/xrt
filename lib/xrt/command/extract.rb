@@ -22,6 +22,7 @@ module XRT
         found_blocks = from_doc.find_block_texts.select{|block|
           block.content.index(target_block) == 0
         }
+        found_blocks = resolve_inclusions(found_blocks)
 
         if found_blocks.length == 0
           raise "target_block not found"
@@ -45,6 +46,17 @@ module XRT
         transaction.new_file transaction.full_path(templates_directory, to_file_name), content_for_new_file
 
         transaction
+      end
+
+      # input: [<h1>a</h1>, <h1>]
+      # output: [<h1>a</h1>]
+      def resolve_inclusions(items)
+        items.combination(2){|parent, child|
+          if parent.include? child
+            items.delete(child)
+          end
+        }
+        items
       end
     end
   end
