@@ -268,6 +268,19 @@ class TestTag < Test::Unit::TestCase
     }
   end
 
+  def test_tag_name_when_parse_failed
+    tag = XRT::Statement::Tag.new('<')
+    tag << XRT::Statement::Text.new(' 1')
+    tag << XRT::Statement::TagEnd.new('>')
+    assert_equal nil, tag.tag_name
+  end
+
+  def test_tag_name_when_empty_broken_tag
+    tag = XRT::Statement::Tag.new('<')
+    tag << XRT::Statement::TagEnd.new('>')
+    assert_equal nil, tag.tag_name
+  end
+
   def test_void_element?
     [
       ['div', false],

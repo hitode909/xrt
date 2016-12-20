@@ -204,7 +204,10 @@ module XRT
       end
 
       def tag_name
-        @children[1].content.match(%r{\A/?(\S+)})[1].downcase
+        return nil if @children.empty?
+        matched = @children[1].content.match(%r{\A/?(\w+)})
+        return nil unless matched
+        return matched[1].downcase
       end
 
       def tag_opening?
