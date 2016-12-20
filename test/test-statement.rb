@@ -125,6 +125,23 @@ HTML
     assert_equal '2', document.content, 'replaced'
   end
 
+  def test_include?
+    document = XRT::Statement::Document.new
+    block = XRT::Statement::Block.new('[% IF 1 %]')
+    s1 = XRT::Statement::Text.new('1')
+    s2 = XRT::Statement::Text.new('2')
+    s3 = XRT::Statement::Text.new('3')
+    block << s1
+    document << block
+    document << s2
+
+    assert document.include? s1
+    assert document.include? s2
+    assert_false document.include? s3
+    assert block.include? s1
+    assert_false block.include? s2
+  end
+
   def test_replace_child_for_descendant
     document = XRT::Statement::Document.new
     if_block = XRT::Statement::Block.new('[% IF a %]')
@@ -209,4 +226,62 @@ class TestBlock < Test::Unit::TestCase
 
     assert_equal block.content, %q{[% IF 1 %]ok[% END %]}
   end
+end
+
+class TestTag < Test::Unit::TestCase
+  def test_opening_tag
+    tag = XRT::Statement::Tag.new('<')
+    tag << XRT::Statement::Text.new('div')
+    tag << XRT::Statement::TagEnd.new('>')
+    assert tag.tag_opening?
+    assert_false tag.tag_closing?
+  end
+
+  def test_closing_tag
+    tag = XRT::Statement::Tag.new('<')
+    tag << XRT::Statement::Text.new('/div')
+    tag << XRT::Statement::TagEnd.new('>')
+    assert_false tag.tag_opening?
+    assert tag.tag_closing?
+  end
+
+  def test_independent_tag
+    tag = XRT::Statement::Tag.new('<')
+    tag << XRT::Statement::Text.new('div/')
+    tag << XRT::Statement::TagEnd.new('>')
+    assert_false tag.tag_opening?
+    assert_false tag.tag_closing?
+    assert tag.tag_independent?
+  end
+
+  def test_tag_name
+    [
+      'div',
+      'DIV',
+      '/div',
+      'div class="title"',
+    ].each{|test_case|
+      tag = XRT::Statement::Tag.new('<')
+      tag << XRT::Statement::Text.new(test_case)
+      tag << XRT::Statement::TagEnd.new('>')
+      assert_equal 'div', tag.tag_name
+    }
+  end
+
+  def test_void_element?
+    [
+      ['div', false],
+      ['img', true],
+    ].each{|test_case|
+      tag_name, expect = *test_case
+
+      tag = XRT::Statement::Tag.new('<')
+      tag << XRT::Statement::Text.new(tag_name)
+      tag << XRT::Statement::TagEnd.new('>')
+      assert_equal expect, tag.tag_void_element?
+
+      assert_equal !expect, tag.tag_opening?, 'void element is not open'
+    }
+  end
+
 end

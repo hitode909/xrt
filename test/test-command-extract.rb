@@ -32,7 +32,7 @@ class TestCommandExtract < Test::Unit::TestCase
     }
   end
 
-  def _todo_est_extract_text
+  def test_extract_text
     Dir.mktmpdir{|dir|
       templates_dir = Pathname(dir).join('templates')
       templates_dir.mkdir

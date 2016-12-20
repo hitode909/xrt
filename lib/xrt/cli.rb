@@ -9,6 +9,9 @@ module XRT
       when 'dump'
         success = XRT::Command::Dump.new.execute(args)
         exit success ? 0 : 1
+      when 'dump_blocks'
+        XRT::Command::DumpBlocks.new.execute(args)
+        exit 0
       when 'extract'
         success = XRT::Command::Extract.new.execute(*args)
         exit success ? 0 : 1

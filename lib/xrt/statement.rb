@@ -22,6 +22,14 @@ module XRT
       []
     end
 
+    def include? statement
+      children.each{|child|
+        return true if child.equal? statement
+        return true if child.include?(statement)
+      }
+      return false
+    end
+
     def replace_child(new_child, old_child)
       children.each_with_index{|child, index|
         if child.equal? old_child
@@ -165,7 +173,7 @@ module XRT
       end
 
       def << statement
-        raise 'trying to push_child to closed block' if closed?
+        raise "trying to push_child to closed block: #{self.inspect} << #{statement.inspect}" if closed?
         @children << statement
       end
 
@@ -187,6 +195,44 @@ module XRT
         @children = []
         tag_start = XRT::Statement::TagStart.new content
         self << tag_start
+      end
+
+      def tag_void_element?
+        # https://www.w3.org/TR/html5/syntax.html#void-elements
+        void_element_names = %w( area base br col embed hr img input keygen link meta param source track wbr )
+        void_element_names.include?(self.tag_name)
+      end
+
+      def tag_name
+        @children[1].content.match(%r{\A/?(\S+)})[1].downcase
+      end
+
+      def tag_opening?
+        !tag_independent? && !tag_closing? && !tag_void_element?
+      end
+
+      def tag_closing?
+        @children[1].content[0] == '/'
+      end
+
+      def tag_independent?
+        @children[-2].content[-1] == '/'
+      end
+    end
+
+    class TagPair < Block
+      def initialize tag
+        @children = [ tag ]
+      end
+    end
+
+    class TagPairEnd < End
+      def content
+        @content.content
+      end
+
+      def inspect
+      "(#{self.class}:#{@content.inspect})"
       end
     end
   end

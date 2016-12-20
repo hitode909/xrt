@@ -65,14 +65,42 @@ class TestParser < Test::Unit::TestCase
   end
 
   def test_document_tag
-    parser = XRT::Parser.new('<div>')
+    parser = XRT::Parser.new('<div>a</div>')
     doc = parser.document
     assert doc.kind_of? XRT::Statement::Document
-    tag = XRT::Statement::Tag.new '<'
-    tag << XRT::Statement::Text.new('div')
-    tag << XRT::Statement::TagEnd.new('>')
+
+    tag_start = XRT::Statement::Tag.new '<'
+    tag_start << XRT::Statement::Text.new('div')
+    tag_start << XRT::Statement::TagEnd.new('>')
+
+    text = XRT::Statement::Text.new('a')
+
+    tag_close = XRT::Statement::Tag.new '<'
+    tag_close << XRT::Statement::Text.new('/div')
+    tag_close << XRT::Statement::TagEnd.new('>')
+
+    tag_pair = XRT::Statement::TagPair.new(tag_start)
+    tag_pair << text
+    tag_pair << XRT::Statement::TagPairEnd.new(tag_close)
     assert_equal [
-      tag
+      tag_pair,
+    ], doc.children
+  end
+
+  def test_void_element
+    parser = XRT::Parser.new('<img>a')
+    doc = parser.document
+    assert doc.kind_of? XRT::Statement::Document
+
+    tag = XRT::Statement::Tag.new '<'
+    tag << XRT::Statement::Text.new('img')
+    tag << XRT::Statement::TagEnd.new('>')
+
+    text = XRT::Statement::Text.new('a')
+
+    assert_equal [
+      tag,
+      text
     ], doc.children
   end
 
