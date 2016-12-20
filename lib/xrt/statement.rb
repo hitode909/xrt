@@ -11,11 +11,15 @@ module XRT
     end
 
     def == other
-      self.class == other.class && self.content == other.content
+      self.class == other.class && self.to_s == other.to_s
     end
 
     def inspect
       "(#{self.class}:#{self.content})"
+    end
+
+    def to_s
+      inspect
     end
 
     def children
@@ -108,10 +112,6 @@ module XRT
 
       def content
         children.map{|c| c.content }.join
-      end
-
-      def == other
-        self.content == other.content && self.children.zip(other.children).all{|a, b| p [a, b]; a == b }
       end
 
       def inspect
