@@ -189,6 +189,12 @@ module XRT
         self << tag_start
       end
 
+      def tag_void_element?
+        # https://www.w3.org/TR/html5/syntax.html#void-elements
+        void_element_names = %w( area base br col embed hr img input keygen link meta param source track wbr )
+        void_element_names.include?(self.tag_name)
+      end
+
       def tag_name
         @children[1].content.match(%r{\A/?(\S+)})[1].downcase
       end

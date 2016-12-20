@@ -251,4 +251,18 @@ class TestTag < Test::Unit::TestCase
     }
   end
 
+  def test_void_element?
+    [
+      ['div', false],
+      ['img', true],
+    ].each{|test_case|
+      tag_name, expect = *test_case
+
+      tag = XRT::Statement::Tag.new('<')
+      tag << XRT::Statement::Text.new(tag_name)
+      tag << XRT::Statement::TagEnd.new('>')
+      assert_equal expect, tag.tag_void_element?
+    }
+  end
+
 end
