@@ -20,6 +20,11 @@ module XRT
     # returns parsed container node
     # return when tokenized is empty, or node is closed
     def parse_contents(tokenized, node)
+      if node.kind_of?(XRT::Statement::TagPair) && node.children[0].tag_raw_text_element?
+        parse_raw_text_element(tokenized, node)
+        return
+      end
+
       while tokenized.length > 0
         statement = new_statement(tokenized.shift)
 
@@ -54,6 +59,34 @@ module XRT
       end
 
       node
+    end
+
+    def parse_raw_text_element(tokenized, node)
+      syntax = XRT::Syntax.new
+      tag_name = node.children[0].tag_name
+
+      while tokenized.length > 0
+        maybe_close_tag = new_statement(tokenized[0])
+        maybe_closing_content = new_statement(tokenized[1])
+
+        if maybe_close_tag.kind_of?(XRT::Statement::Tag)
+          maybe_close_tag << maybe_closing_content
+          if maybe_close_tag.tag_closing? && maybe_close_tag.tag_name == tag_name
+            close_tag = new_statement(tokenized.shift)
+            parse_contents(tokenized, close_tag)
+            statement = XRT::Statement::TagPairEnd.new(close_tag)
+            node << statement
+            return
+          end
+        end
+
+        content = tokenized.shift
+        if syntax.whitespace? content
+          node << XRT::Statement::Whitespace.new(content)
+        else
+          node << XRT::Statement::Text.new(content)
+        end
+      end
     end
 
     def new_statement content
