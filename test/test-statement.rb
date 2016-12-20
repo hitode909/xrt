@@ -237,4 +237,18 @@ class TestTag < Test::Unit::TestCase
     assert tag.tag_independent?
   end
 
+  def test_tag_name
+    [
+      'div',
+      'DIV',
+      '/div',
+      'div class="title"',
+    ].each{|test_case|
+      tag = XRT::Statement::Tag.new('<')
+      tag << XRT::Statement::Text.new(test_case)
+      tag << XRT::Statement::TagEnd.new('>')
+      assert_equal 'div', tag.tag_name
+    }
+  end
+
 end

@@ -189,6 +189,10 @@ module XRT
         self << tag_start
       end
 
+      def tag_name
+        @children[1].content.match(%r{\A/?(\S+)})[1].downcase
+      end
+
       def tag_opening?
         !tag_independent? && !tag_closing?
       end
