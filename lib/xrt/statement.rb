@@ -11,11 +11,15 @@ module XRT
     end
 
     def == other
-      self.class == other.class && self.content == other.content
+      self.class == other.class && self.to_s == other.to_s
     end
 
     def inspect
       "(#{self.class}:#{self.content})"
+    end
+
+    def to_s
+      inspect
     end
 
     def children
@@ -92,30 +96,6 @@ module XRT
   end
 
   class Statement
-    module Factory
-      def self.new_from_content content
-        syntax = XRT::Syntax.new
-
-        block_level = syntax.block_level content
-
-        if block_level == 1
-          XRT::Statement::Block.new content
-        elsif block_level == -1
-          XRT::Statement::End.new content
-        elsif syntax.block? content
-          XRT::Statement::Directive.new content
-        elsif syntax.tag_start? content
-          XRT::Statement::Tag.new content
-        elsif syntax.tag_end? content
-          XRT::Statement::TagEnd.new content
-        elsif syntax.whitespace? content
-          XRT::Statement::Whitespace.new content
-        else
-          XRT::Statement::Text.new content
-        end
-      end
-
-    end
 
     class Document < Statement
       def initialize
@@ -132,10 +112,6 @@ module XRT
 
       def content
         children.map{|c| c.content }.join
-      end
-
-      def == other
-        self.content == other.content && self.children.zip(other.children).all{|a, b| p [a, b]; a == b }
       end
 
       def inspect
@@ -190,6 +166,9 @@ module XRT
       end
     end
 
+    class ControlBlock < Block
+    end
+
     class Tag < Block
       def initialize content
         @children = []
@@ -201,6 +180,12 @@ module XRT
         # https://www.w3.org/TR/html5/syntax.html#void-elements
         void_element_names = %w( area base br col embed hr img input keygen link meta param source track wbr )
         void_element_names.include?(self.tag_name)
+      end
+
+      def tag_raw_text_element?
+        # https://www.w3.org/TR/html5/syntax.html#raw-text-elements
+        raw_element_names = %w( script style )
+        raw_element_names.include?(self.tag_name)
       end
 
       def tag_name

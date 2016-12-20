@@ -6,6 +6,18 @@ class TestParser < Test::Unit::TestCase
     @parser = XRT::Parser.new
   end
 
+  def test_new_statement
+    parser = XRT::Parser.new('')
+
+    assert parser.new_statement('hi').kind_of? XRT::Statement::Text
+    assert parser.new_statement(' ').kind_of? XRT::Statement::Whitespace
+    assert parser.new_statement('[% foo %]').kind_of? XRT::Statement::Directive
+    assert parser.new_statement('[% foo IF 1 %]').kind_of? XRT::Statement::Directive
+    assert parser.new_statement('[% IF 1 %]').kind_of? XRT::Statement::ControlBlock
+    assert parser.new_statement('<').kind_of? XRT::Statement::Tag
+    assert parser.new_statement('>').kind_of? XRT::Statement::TagEnd
+  end
+
   def test_document_empty
     parser = XRT::Parser.new('')
     doc = parser.document
@@ -41,9 +53,9 @@ class TestParser < Test::Unit::TestCase
     parser = XRT::Parser.new('[% IF a %]1[% END %]')
     doc = parser.document
     assert doc.kind_of? XRT::Statement::Document
-    if_block = XRT::Statement::Block.new('[% IF a %]')
+    if_block = XRT::Statement::ControlBlock.new('[% IF a %]')
     if_block << XRT::Statement::Text.new('1')
-    if_block << XRT::Statement::Text.new('[% END %]')
+    if_block << XRT::Statement::End.new('[% END %]')
     assert_equal [
       if_block
     ], doc.children
@@ -53,12 +65,12 @@ class TestParser < Test::Unit::TestCase
     parser = XRT::Parser.new('[% IF a %][% IF b %]1[% END %][% END %]')
     doc = parser.document
     assert doc.kind_of? XRT::Statement::Document
-    if_block1 = XRT::Statement::Block.new('[% IF a %]')
-    if_block2 = XRT::Statement::Block.new('[% IF b %]')
+    if_block1 = XRT::Statement::ControlBlock.new('[% IF a %]')
+    if_block2 = XRT::Statement::ControlBlock.new('[% IF b %]')
     if_block2 << XRT::Statement::Text.new('1')
-    if_block2 << XRT::Statement::Text.new('[% END %]')
+    if_block2 << XRT::Statement::End.new('[% END %]')
     if_block1 << if_block2
-    if_block1 << XRT::Statement::Text.new('[% END %]')
+    if_block1 << XRT::Statement::End.new('[% END %]')
     assert_equal [
       if_block1
     ], doc.children
@@ -101,6 +113,85 @@ class TestParser < Test::Unit::TestCase
     assert_equal [
       tag,
       text
+    ], doc.children
+  end
+
+  def test_block_in_raw_text_element
+    parser = XRT::Parser.new('<script>[% IF a %]1[% END %][% b %]</script>')
+    doc = parser.document
+    assert doc.kind_of? XRT::Statement::Document
+
+    tag_start = XRT::Statement::Tag.new '<'
+    tag_start << XRT::Statement::Text.new('script')
+    tag_start << XRT::Statement::TagEnd.new('>')
+
+    tag_close = XRT::Statement::Tag.new '<'
+    tag_close << XRT::Statement::Text.new('/script')
+    tag_close << XRT::Statement::TagEnd.new('>')
+
+    if_block = XRT::Statement::ControlBlock.new('[% IF a %]')
+    if_block << XRT::Statement::Text.new('1')
+    if_block << XRT::Statement::End.new('[% END %]')
+
+    directive = XRT::Statement::Directive.new('[% b %]')
+
+    tag_pair = XRT::Statement::TagPair.new(tag_start)
+    tag_pair << if_block
+    tag_pair << directive
+    tag_pair << XRT::Statement::TagPairEnd.new(tag_close)
+
+    assert_equal [
+      tag_pair,
+    ], doc.children
+  end
+
+  def test_simple_raw_text_element
+    parser = XRT::Parser.new('<script>1<2</script>')
+    doc = parser.document
+    assert doc.kind_of? XRT::Statement::Document
+
+    tag_start = XRT::Statement::Tag.new '<'
+    tag_start << XRT::Statement::Text.new('script')
+    tag_start << XRT::Statement::TagEnd.new('>')
+
+    tag_close = XRT::Statement::Tag.new '<'
+    tag_close << XRT::Statement::Text.new('/script')
+    tag_close << XRT::Statement::TagEnd.new('>')
+
+    tag_pair = XRT::Statement::TagPair.new(tag_start)
+    tag_pair << XRT::Statement::Text.new('1')
+    tag_pair << XRT::Statement::Text.new('<')
+    tag_pair << XRT::Statement::Text.new('2')
+    tag_pair << XRT::Statement::TagPairEnd.new(tag_close)
+
+    assert_equal [
+      tag_pair,
+    ], doc.children
+  end
+
+  def test_raw_text_in_block_in_raw_text_element
+    parser = XRT::Parser.new('<script>[% IF a %]<[% END %]</script>')
+    doc = parser.document
+    assert doc.kind_of? XRT::Statement::Document
+
+    tag_start = XRT::Statement::Tag.new '<'
+    tag_start << XRT::Statement::Text.new('script')
+    tag_start << XRT::Statement::TagEnd.new('>')
+
+    tag_close = XRT::Statement::Tag.new '<'
+    tag_close << XRT::Statement::Text.new('/script')
+    tag_close << XRT::Statement::TagEnd.new('>')
+
+    if_block = XRT::Statement::ControlBlock.new('[% IF a %]')
+    if_block << XRT::Statement::Text.new('<')
+    if_block << XRT::Statement::End.new('[% END %]')
+
+    tag_pair = XRT::Statement::TagPair.new(tag_start)
+    tag_pair << if_block
+    tag_pair << XRT::Statement::TagPairEnd.new(tag_close)
+
+    assert_equal [
+      tag_pair,
     ], doc.children
   end
 
