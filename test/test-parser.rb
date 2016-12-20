@@ -82,7 +82,6 @@ class TestParser < Test::Unit::TestCase
     tag_pair = XRT::Statement::TagPair.new(tag_start)
     tag_pair << text
     tag_pair << XRT::Statement::TagPairEnd.new(tag_close)
-    p tag_pair
     assert_equal [
       tag_pair,
     ], doc.children
