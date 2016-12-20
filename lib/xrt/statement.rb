@@ -179,6 +179,12 @@ module XRT
         void_element_names.include?(self.tag_name)
       end
 
+      def tag_raw_text_element?
+        # https://www.w3.org/TR/html5/syntax.html#raw-text-elements
+        raw_element_names = %w( script style )
+        raw_element_names.include?(self.tag_name)
+      end
+
       def tag_name
         return nil if @children.empty?
         matched = @children[1].content.match(%r{\A/?(\w+)})
