@@ -82,7 +82,14 @@ module XRT
         end
 
         content = tokenized.shift
-        if syntax.whitespace? content
+        block_level = syntax.block_level content
+        if block_level == 1
+          statement = XRT::Statement::Block.new content
+          parse_contents(tokenized, statement)
+          node << statement
+        elsif syntax.block? content
+          node << XRT::Statement::Directive.new(content)
+        elsif syntax.whitespace? content
           node << XRT::Statement::Whitespace.new(content)
         else
           node << XRT::Statement::Text.new(content)

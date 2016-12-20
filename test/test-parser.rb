@@ -117,6 +117,35 @@ class TestParser < Test::Unit::TestCase
   end
 
   def test_simple_raw_text_element
+    parser = XRT::Parser.new('<script>[% IF a %]1[% END %][% b %]</script>')
+    doc = parser.document
+    assert doc.kind_of? XRT::Statement::Document
+
+    tag_start = XRT::Statement::Tag.new '<'
+    tag_start << XRT::Statement::Text.new('script')
+    tag_start << XRT::Statement::TagEnd.new('>')
+
+    tag_close = XRT::Statement::Tag.new '<'
+    tag_close << XRT::Statement::Text.new('/script')
+    tag_close << XRT::Statement::TagEnd.new('>')
+
+    if_block = XRT::Statement::Block.new('[% IF a %]')
+    if_block << XRT::Statement::Text.new('1')
+    if_block << XRT::Statement::End.new('[% END %]')
+
+    directive = XRT::Statement::Directive.new('[% b %]')
+
+    tag_pair = XRT::Statement::TagPair.new(tag_start)
+    tag_pair << if_block
+    tag_pair << directive
+    tag_pair << XRT::Statement::TagPairEnd.new(tag_close)
+
+    assert_equal [
+      tag_pair,
+    ], doc.children
+  end
+
+  def test_block_in_raw_text_element
     parser = XRT::Parser.new('<script>1<2</script>')
     doc = parser.document
     assert doc.kind_of? XRT::Statement::Document
