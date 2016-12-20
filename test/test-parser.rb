@@ -116,7 +116,7 @@ class TestParser < Test::Unit::TestCase
     ], doc.children
   end
 
-  def test_simple_raw_text_element
+  def test_block_in_raw_text_element
     parser = XRT::Parser.new('<script>[% IF a %]1[% END %][% b %]</script>')
     doc = parser.document
     assert doc.kind_of? XRT::Statement::Document
@@ -145,7 +145,7 @@ class TestParser < Test::Unit::TestCase
     ], doc.children
   end
 
-  def test_block_in_raw_text_element
+  def test_simple_raw_text_element
     parser = XRT::Parser.new('<script>1<2</script>')
     doc = parser.document
     assert doc.kind_of? XRT::Statement::Document
