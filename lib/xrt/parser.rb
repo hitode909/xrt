@@ -61,6 +61,7 @@ module XRT
       node
     end
 
+    # parse all statements as texts and whitespaces until </script> will appear.
     def parse_raw_text_element(tokenized, node)
       syntax = XRT::Syntax.new
       tag_name = node.children[0].tag_name
