@@ -15,6 +15,10 @@ module XRT
       doc
     end
 
+    # read tokens from tokenized tokens
+    # push contents to (container) node
+    # returns parsed container node
+    # return when tokenized is empty, or node is closed
     def parse_contents(tokenized, node)
       while tokenized.length > 0
         statement = XRT::Statement::Factory.new_from_content(tokenized.shift)
