@@ -125,6 +125,25 @@ HTML
     assert_equal '2', document.content, 'replaced'
   end
 
+  def test_include?
+    def test_replace_child
+      document = XRT::Statement::Document.new
+      block = XRT::Statement::Block.new('[% IF 1 %]')
+      s1 = XRT::Statement::Text.new('1')
+      s2 = XRT::Statement::Text.new('2')
+      s3 = XRT::Statement::Text.new('3')
+      block << s1
+      document << block
+      document << s2
+
+      assert document.include? s1
+      assert document.include? s2
+      assert_false document.include? s3
+      assert block.include? s1
+      assert_false block.include? s2
+    end
+  end
+
   def test_replace_child_for_descendant
     document = XRT::Statement::Document.new
     if_block = XRT::Statement::Block.new('[% IF a %]')

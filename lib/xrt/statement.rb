@@ -22,6 +22,14 @@ module XRT
       []
     end
 
+    def include? statement
+      children.each{|child|
+        return true if child.equal? statement
+        return true if child.include?(statement)
+      }
+      return false
+    end
+
     def replace_child(new_child, old_child)
       children.each_with_index{|child, index|
         if child.equal? old_child
