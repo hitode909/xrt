@@ -28,8 +28,16 @@ module XRT
           parse_contents(tokenized, statement)
           if statement.tag_opening?
             statement = XRT::Statement::TagPair.new(statement)
+            parse_contents(tokenized, statement)
+            node << statement
+            next
           elsif statement.tag_closing?
             statement = XRT::Statement::TagPairEnd.new(statement)
+            node << statement
+            break
+          else
+            node << statement
+            next
           end
         end
 

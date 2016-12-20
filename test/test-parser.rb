@@ -87,6 +87,23 @@ class TestParser < Test::Unit::TestCase
     ], doc.children
   end
 
+  def test_void_element
+    parser = XRT::Parser.new('<img>a')
+    doc = parser.document
+    assert doc.kind_of? XRT::Statement::Document
+
+    tag = XRT::Statement::Tag.new '<'
+    tag << XRT::Statement::Text.new('img')
+    tag << XRT::Statement::TagEnd.new('>')
+
+    text = XRT::Statement::Text.new('a')
+
+    assert_equal [
+      tag,
+      text
+    ], doc.children
+  end
+
   def test_read_directive
     assert_equal '[% %]', @parser.read_directive('[% %]')
     assert_equal '[% [ ] %]', @parser.read_directive('[% [ ] %]')
