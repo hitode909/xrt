@@ -47,7 +47,7 @@ module XRT
         end
 
         case statement
-        when XRT::Statement::Block
+        when XRT::Statement::ControlBlock
           parse_contents(tokenized, statement)
           node << statement
         when XRT::Statement::End
@@ -84,7 +84,7 @@ module XRT
         content = tokenized.shift
         block_level = syntax.block_level content
         if block_level == 1
-          statement = XRT::Statement::Block.new content
+          statement = XRT::Statement::ControlBlock.new content
           parse_contents(tokenized, statement)
           node << statement
         elsif syntax.block? content
@@ -103,7 +103,7 @@ module XRT
       block_level = syntax.block_level content
 
       if block_level == 1
-        XRT::Statement::Block.new content
+        XRT::Statement::ControlBlock.new content
       elsif block_level == -1
         XRT::Statement::End.new content
       elsif syntax.block? content

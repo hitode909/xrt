@@ -13,7 +13,7 @@ class TestParser < Test::Unit::TestCase
     assert parser.new_statement(' ').kind_of? XRT::Statement::Whitespace
     assert parser.new_statement('[% foo %]').kind_of? XRT::Statement::Directive
     assert parser.new_statement('[% foo IF 1 %]').kind_of? XRT::Statement::Directive
-    assert parser.new_statement('[% IF 1 %]').kind_of? XRT::Statement::Block
+    assert parser.new_statement('[% IF 1 %]').kind_of? XRT::Statement::ControlBlock
     assert parser.new_statement('<').kind_of? XRT::Statement::Tag
     assert parser.new_statement('>').kind_of? XRT::Statement::TagEnd
   end
@@ -53,7 +53,7 @@ class TestParser < Test::Unit::TestCase
     parser = XRT::Parser.new('[% IF a %]1[% END %]')
     doc = parser.document
     assert doc.kind_of? XRT::Statement::Document
-    if_block = XRT::Statement::Block.new('[% IF a %]')
+    if_block = XRT::Statement::ControlBlock.new('[% IF a %]')
     if_block << XRT::Statement::Text.new('1')
     if_block << XRT::Statement::End.new('[% END %]')
     assert_equal [
@@ -65,8 +65,8 @@ class TestParser < Test::Unit::TestCase
     parser = XRT::Parser.new('[% IF a %][% IF b %]1[% END %][% END %]')
     doc = parser.document
     assert doc.kind_of? XRT::Statement::Document
-    if_block1 = XRT::Statement::Block.new('[% IF a %]')
-    if_block2 = XRT::Statement::Block.new('[% IF b %]')
+    if_block1 = XRT::Statement::ControlBlock.new('[% IF a %]')
+    if_block2 = XRT::Statement::ControlBlock.new('[% IF b %]')
     if_block2 << XRT::Statement::Text.new('1')
     if_block2 << XRT::Statement::End.new('[% END %]')
     if_block1 << if_block2
@@ -129,7 +129,7 @@ class TestParser < Test::Unit::TestCase
     tag_close << XRT::Statement::Text.new('/script')
     tag_close << XRT::Statement::TagEnd.new('>')
 
-    if_block = XRT::Statement::Block.new('[% IF a %]')
+    if_block = XRT::Statement::ControlBlock.new('[% IF a %]')
     if_block << XRT::Statement::Text.new('1')
     if_block << XRT::Statement::End.new('[% END %]')
 

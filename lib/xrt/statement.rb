@@ -166,6 +166,9 @@ module XRT
       end
     end
 
+    class ControlBlock < Block
+    end
+
     class Tag < Block
       def initialize content
         @children = []
