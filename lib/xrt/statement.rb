@@ -196,7 +196,7 @@ module XRT
       end
 
       def tag_opening?
-        !tag_independent? && !tag_closing? && !tag_void_element?
+        !tag_independent? && !tag_closing? && !tag_void_element? && !tag_comment?
       end
 
       def tag_closing?
@@ -205,6 +205,10 @@ module XRT
 
       def tag_independent?
         @children[-2].content[-1] == '/'
+      end
+
+      def tag_comment?
+        @children[1].content[0] == '!'
       end
     end
 
