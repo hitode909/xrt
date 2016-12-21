@@ -242,6 +242,17 @@ class TestTag < Test::Unit::TestCase
     assert tag.tag_independent?
   end
 
+  def test_comment
+    tag = XRT::Statement::Tag.new('<')
+    tag << XRT::Statement::Text.new('!--')
+    tag << XRT::Statement::Whitespace.new(' ')
+    tag << XRT::Statement::Text.new('--')
+    tag << XRT::Statement::TagEnd.new('>')
+    assert_false tag.tag_opening?
+    assert_false tag.tag_closing?
+    assert tag.tag_comment?
+  end
+
   def test_tag_name
     [
       'div',
