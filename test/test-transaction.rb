@@ -27,6 +27,15 @@ class TestTransaction < Test::Unit::TestCase
     }
   end
 
+  def test_new_file_with_directory
+    Dir.mktmpdir{|dir|
+      transaction = XRT::Transaction.new
+      transaction.new_file transaction.full_path(dir, 'some_dir/hello.txt').to_s, 'Hello!'
+      transaction.commit!
+      assert_equal 'Hello!', transaction.full_path(dir, 'some_dir', 'hello.txt').open.read
+    }
+  end
+
   def test_new_file_throws_error_when_conflict
     Dir.mktmpdir{|dir|
       Pathname(dir).join('hello.txt').open('w'){ |f| f.write 'existing content' }

@@ -34,6 +34,10 @@ module XRT
 
     def commit!
       files.each_pair{|path, content|
+        unless full_path(path).dirname.exist?
+          full_path(path).dirname.mkpath
+        end
+
         full_path(path).open('w') {|f|
           f.write content
         }
